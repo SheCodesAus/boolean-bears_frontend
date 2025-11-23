@@ -73,3 +73,11 @@ export const allCourses = [
     },
 ];
 
+export const oneCourse = {
+        id: 2,
+        title: "Advanced CSS Layouts with Flexbox and Grid",
+        course_content: "Master modern web design techniques.",
+        category: "Web Development",
+        owner: "emily",
+        created_at: "2025-11-01T14:30:00Z",
+};
