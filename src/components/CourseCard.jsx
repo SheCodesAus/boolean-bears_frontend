@@ -3,10 +3,11 @@ import "./CourseCard.css";
 
 function CourseCard(props) {
     const { courseData } = props;
+    const courseLink = `/courses/${courseData.id}`;
 
     return (
         <div className="course-card">
-            <Link to={`/course/${courseData.id}`}>
+            <Link to={courseLink}>
                 <h2>{courseData.title}</h2>
                 <p>Category: {courseData.category}</p>
                 <p>By: {courseData.owner}</p>
