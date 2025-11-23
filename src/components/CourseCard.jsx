@@ -3,7 +3,7 @@ import "./CourseCard.css";
 
 function CourseCard(props) {
     const { courseData } = props;
-    const courseLink = `courses/${courseData.id}`;
+    const courseLink = `course/${courseData.id}`;
 
     return (
         <div className="course-card">

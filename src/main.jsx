@@ -13,7 +13,7 @@ const router = createBrowserRouter([
       element: <NavBar />,
       children: [
           { path: "/", element: <HomePage /> },
-          {path: "/courses/:id", element: <CoursePage /> },
+          {path: "/course/:id", element: <CoursePage /> },
       ],
   },
 ]);
