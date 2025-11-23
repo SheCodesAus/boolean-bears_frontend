@@ -1,5 +1,15 @@
+import { allCourses } from "../data";
+import CourseCard from "../components/CourseCard";
+import "./HomePage.css";
+
 function HomePage() {
-    return <h1>This is the home page.</h1>;
+    return (
+        <div id="course-list">
+            {allCourses.map((courseData, key) => {
+                return <CourseCard key={key} courseData={courseData} />;
+            })}
+        </div>
+    );
 }
 
 export default HomePage;
