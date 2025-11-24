@@ -1,0 +1,71 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import postLogin from "../api/post-login.js";
+
+function LoginForm() {
+    const navigate = useNavigate();
+
+    const [credentials, setCredentials] = useState({
+        username: "",
+        password: "",
+    });
+
+    const handleChange = (event) => {
+        const { id, value } = event.target;
+        setCredentials((prevCredentials) => ({
+            ...prevCredentials,
+            [id]: value,
+        }));
+    };
+
+    // Function handleChange: the "Typing" Function 
+    // Function handleSubmit: the "Login" Function
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (credentials.username && credentials.password) {
+            postLogin(
+                credentials.username,
+                credentials.password
+            ).then((response) => {
+                window.localStorage.setItem("token", response.token);
+                navigate("/");
+            });
+        }
+    };
+
+    return (
+        <form>
+            <div>
+                <label htmlFor="username">USER NAME</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    placeholder="USER NAME" 
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label htmlFor="password">PASSWORD</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="PASSWORD" 
+                    onChange={handleChange}
+                />
+            </div>
+            <button type="submit" onClick={handleSubmit}>
+                LOG IN
+            </button>
+            <div className="signup-prompt">
+                Don't have an account yet?
+                <br />
+                {/* Once SignUpPage is created, Link should be defined: Create one <Link to="/signup">here</Link> to start learning! */}
+                Create one here to start learning!
+            </div>
+        </form>
+    );
+}
+
+export default LoginForm;
+
