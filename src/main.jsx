@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import HomePage from "./pages/HomePage.jsx";
 import CoursePage from "./pages/CoursePage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
 
 import NavBar from "./components/NavBar.jsx";
 
@@ -13,10 +14,12 @@ const router = createBrowserRouter([
       element: <NavBar />,
       children: [
           { path: "/", element: <HomePage /> },
-          {path: "/course/:id", element: <CoursePage /> },
+          { path: "/login", element: <LoginPage /> },
+          { path: "/course/:id", element: <CoursePage /> },
       ],
   },
 ]);
+
   ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
       {/* Here we wrap our app in the router provider so they render */}
