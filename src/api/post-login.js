@@ -1,6 +1,6 @@
 // --- Function Definition and URL Construction ---
 async function postLogin(username, password) {
-    const url = `${import.meta.env.VITE_API_URL}/api-token-auth/`;
+    const url = `${import.meta.env.VITE_API_URL}/api-auth-token/`;
 
     // --- Making the Authentication Request ---
     const response = await fetch(url, {
