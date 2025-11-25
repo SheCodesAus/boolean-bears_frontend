@@ -9,6 +9,7 @@ import CreateCoursePage from "./pages/CreateCoursePage.jsx";
 import CreateAccountPage from "./pages/CreateAccountPage.jsx"; 
 
 import NavBar from "./components/NavBar.jsx";
+import About from "./pages/About.jsx";
 import { AuthProvider } from './components/AuthProvider.jsx';
 
 const router = createBrowserRouter([
@@ -17,6 +18,8 @@ const router = createBrowserRouter([
       element: <NavBar />,
       children: [
           { path: "/", element: <HomePage /> },
+          {path: "/course/:id", element: <CoursePage /> },
+          {path: "/about", element: <About />},
           { path: "/login", element: <LoginPage /> },
           { path: "/course/:id", element: <CoursePage /> },
           { path: "/createcourse", element: <CreateCoursePage /> },
