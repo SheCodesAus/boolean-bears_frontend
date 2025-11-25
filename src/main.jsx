@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage.jsx";
 import CoursePage from "./pages/CoursePage.jsx";
 
 import NavBar from "./components/NavBar.jsx";
+import About from "./pages/About.jsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
       children: [
           { path: "/", element: <HomePage /> },
           {path: "/course/:id", element: <CoursePage /> },
+          {path: "/about", element: <About />},
       ],
   },
 ]);
