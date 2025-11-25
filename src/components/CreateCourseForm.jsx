@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import postCreateCourse from "../api/create-course.js";
+import postCreateCourse from "../api/post-createcourse.js";
 import { useAuth } from "../hooks/use-auth.js";
 
 function CreateCourseForm() {

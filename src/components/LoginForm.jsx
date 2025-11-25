@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import postLogin from "../api/post-login.js";
 import { useAuth } from "../hooks/use-auth.js";
@@ -43,6 +43,7 @@ function LoginForm() {
 
     return (
         <form>
+            <h2>LOG IN</h2>
             <div>
                 <label htmlFor="username">USER NAME</label>
                 <input 
@@ -67,8 +68,7 @@ function LoginForm() {
             <div className="signup-prompt">
                 Don't have an account yet?
                 <br />
-                {/* Once SignUpPage is created, Link should be defined: Create one <Link to="/signup">here</Link> to start learning! */}
-                Create one here to start learning!
+                Create one <Link to="/createaccount">here</Link> to start learning!
             </div>
         </form>
     );
