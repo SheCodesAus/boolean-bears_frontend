@@ -15,7 +15,9 @@ function NavBar() {
         <nav id="navbar">
         <Link to="/">Home</Link>
 
-        <Link to="/createcourse">Create New Course</Link>
+        <Link to="/createcourse">CREATE A COURSE</Link>
+
+        <Link to="/createaccount">CREATE AN ACCOUNT</Link>
 
         {auth.token ? (
             <>
@@ -27,7 +29,7 @@ function NavBar() {
                 </span>
             </>
             ) : (
-            <Link to="/login">Login</Link>
+            <Link to="/login">LOG IN</Link>
         )}
 
         </nav>

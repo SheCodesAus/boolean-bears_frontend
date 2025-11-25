@@ -1,4 +1,4 @@
-async function postCreateUser(payload) {
+async function postCreateAccount(payload) {
     const url = `${import.meta.env.VITE_API_URL}/users/`;
     
     const headers = {
@@ -25,4 +25,4 @@ async function postCreateUser(payload) {
     return await response.json();
 }
 
-export default postCreateUser;
+export default postCreateAccount;
