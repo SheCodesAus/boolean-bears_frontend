@@ -1,10 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useCourse from "../hooks/use-course";
 import categoryImages from "../utils/category-images";
+import { useAuth } from "../hooks/use-auth";
+import deleteCourse from "../api/delete-course";
 
 function CoursePage() {
+    const navigate = useNavigate();
     // Here we use a hook that comes for free in react router called `useParams` to get the id from the URL so that we can pass it to our useCourse hook.
     const { id } = useParams();
+    const { auth } = useAuth();
 
     // useCourse returns three pieces of info, so we need to grab them all here
     const { course, isLoading, error } = useCourse(id);
@@ -17,6 +21,13 @@ function CoursePage() {
         return (<p>{error.message}</p>)
     }
 
+    if (!course) {
+        return (<p>Course not found</p>)
+    }
+
+    // Check if logged-in user is the owner
+    const isOwner = auth?.username === course.owner;
+
     const formatDate = (iso) => {
         if (!iso) return "";
         const d = new Date(iso);
@@ -26,6 +37,27 @@ function CoursePage() {
             month: "long",
             year: "numeric",
         }); // en-GB gives DD/MM/YYYY
+    };
+
+    // Handler for update button
+    const handleUpdateClick = () => {
+        navigate(`/course/update/${id}`)
+    };
+
+    // Handler for delete button
+    const handleDeleteClick = async () => {
+        if (!window.confirm("Are you sure you want to delete this course?")) {
+            return;
+        }
+
+        try {
+            await deleteCourse(id, auth.token);
+            alert("Course deleted successfully!");
+            navigate("/")
+        } catch (err) {
+            console.error("Delete failed:", err);
+            alert(`Failed to delete course: ${err.message}`);
+        }
     };
 
     return (
@@ -43,21 +75,40 @@ function CoursePage() {
                 <h1 className="course-title">{course.title}</h1>
                 
                 {/* 3. Category */}
-                <p><strong>Category:</strong> {course.category}</p>
+                <h3><strong>Category:</strong> {course.category}</h3>
                 
                 {/* 4. By Owner */}
-                <p><strong>By:</strong> {course.owner}</p>
+                <h3><strong>By:</strong> {course.owner}</h3>
                 
                 {/* 5. Maximum Students */}
-                <p><strong>Maximum Students:</strong> {course.max_students}</p>
+                <h3><strong>Maximum Students:</strong> {course.max_students}</h3>
 
                 {/* 6. Brief Description */}
-                <p><strong>Brief Description</strong></p>
-                <textarea>{course.brief_description}</textarea>
+                <h3><strong>Brief Description</strong></h3>
+                <p>{course.brief_description}</p>
 
                 {/* 7. Course Content */}
-                <p><strong>Course Content</strong></p>
-                <textarea>{course.course_content}</textarea>
+                <div>
+                    <h3><strong>Course Content</strong> </h3> 
+                    <div>{course.course_content}</div>
+                </div>
+
+                {isOwner && (
+                    <div className="course-actions">
+                        <button 
+                            className="btn-update"
+                            onClick={handleUpdateClick}
+                        >
+                            Update Course
+                        </button>
+                        <button
+                            className="btn-delete"
+                            onClick={handleDeleteClick}
+                        >
+                            Delete Course
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
