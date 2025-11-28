@@ -1,5 +1,5 @@
 async function deleteCourse(courseId, token) {
-    const url = `${import.meta.env.VITE_API_URL}/courses/${courseId}`;
+    const url = `${import.meta.env.VITE_API_URL}/courses/${courseId}/`;
 
     const headers = {
         "Authorization": `Token ${token}`,
