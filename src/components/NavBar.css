@@ -1,0 +1,19 @@
+#navbar {
+    display: flex;
+    font-family: "Source Sans 3", sans-serif; 
+    font-size: large;
+    font-weight: bold;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--padding-medium);
+    background-color: var(--brand);
+}
+
+.navbar-user {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: large;
+    font-weight: bold;
+    color: var(--base-dark);
+    font-size: 0.9rem;
+    margin-right: 1rem;
+}

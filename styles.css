@@ -1,93 +1,30 @@
+/*font import */
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
- /* font-family: "playfair display", monospace;  */
- /* font-family: "Source Sans 3", sans-serif; */
+
 /* Base HTML Styles */
 
 :root {
+    /* colour */
     --brand:  #fc6055;
     --action: #feaf00;
     --highlight: #007c82;
-    --white: #fffffffb;
+    --white: #ffffff;
     --base-light: #c5bc7b;
     --base-dark: #643413;
     --black: #111111;
 
+    /* padding */
     --padding-base:8px;
     --padding-medium: calc(var(--padding-base)*2);
     --padding-large: calc(var(--padding-base)*4);
     --padding-xl: calc(var(--padding-base)*6);
-}
-
-#navbar {
-    display: flex;
-    font-family: "playfair display", monospace; 
-    font-size: large;
-    font-weight: bold;
-    justify-content: space-around;
-    align-items: center;
-    padding: var(--padding-medium);
-    background-color: var(--brand);
-}
-
-.navbar-user {
-    color: var(--base-dark);
-    font-size: 0.9rem;
-    margin-right: 1rem;
-}
-
-.underline {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 2px;
-}
-
-.text-center {
-    text-align: center;
-}
-
-body {
-    font-family: "Courier Prime", monospace;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--padding-medium);
-}
-
-h1 {
-    display: flex;
-    font-family: "Courier Prime", monospace;
-    font-size: xx-large;
-    font-weight: bold;
-    align-items: center;
-    justify-content: center;
-    max-width: 100%;
-    word-wrap: break-word;
-}
-
-h2 {
-    display: flex;
-    font-family: "Courier Prime", monospace;
-    font-size: x-large;
-    font-weight: bold;
-    align-items: center;
-    justify-content: center;
-    max-width: 100%;
-    word-wrap: break-word;
-}
-
-h3 {
-    font-family: "Courier Prime", monospace;
-    max-width: 100%;
-    word-wrap: break-word;
-}
-
-.update-fundraiser-button {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding: var(--padding-medium);
+    
+    /* fonts */
+    --font-sourcesans: "Source Sans 3", sans-serif;
+    --font-playfair: "Playfair Display", monospace;
 }
 
 /* Hover state */
