@@ -91,7 +91,9 @@ function CoursePage() {
                 {/* 7. Course Content */}
                 <div>
                     <h3><strong>Course Content</strong> </h3> 
-                    <div>{course.course_content}</div>
+                    <div
+                    dangerouslySetInnerHTML={{ __html: course.course_content}}
+                    />
                 </div>
 
                 {isOwner && (

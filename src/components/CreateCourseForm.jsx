@@ -76,7 +76,7 @@ function CreateCourseForm() {
     };
 
     return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleClickSubmit}>
         {error && <p style={{color: 'red'}}>Error: {error}</p>}
         {loading && <p>Creating course...</p>}
         
@@ -86,7 +86,7 @@ function CreateCourseForm() {
                 type="text"
                 id="title"
                 placeholder="Create course title"
-                onChange={handleChange}
+                onChange={handleClickChange}
                 required
             />
         </div>
@@ -129,7 +129,7 @@ function CreateCourseForm() {
                 type="number" 
                 id="max_students" 
                 placeholder="Enter maximum number of students"
-                onChange={handleChange}
+                onChange={handleClickChange}
                 min="1"
                 required
             />
