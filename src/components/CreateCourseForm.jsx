@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postCreateCourse from "../api/post-createcourse.js";
 import { useAuth } from "../hooks/use-auth.js";
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import "./CreateCourseForm.css";
 
 function CreateCourseForm() {
     const navigate = useNavigate();
@@ -13,6 +16,17 @@ function CreateCourseForm() {
         course_content: "",
         category: "",
         max_students: "",
+    });
+
+    // Initialize Tiptap editor
+    const editor = useEditor({
+        extensions: [StarterKit],
+        content: '<p>Start writing your course content...</p>',
+        onUpdate: ({ editor }) => {
+            // Update course_content whenever editor changes
+            const html = editor.getHTML();
+            setCourseform(prev => ({ ...prev, course_content: html }));
+        },
     });
 
     useEffect(() => {
@@ -62,7 +76,7 @@ function CreateCourseForm() {
     };
 
     return (
-    <form>
+    <form onSubmit={handleSubmit}>
         {error && <p style={{color: 'red'}}>Error: {error}</p>}
         {loading && <p>Creating course...</p>}
         
@@ -107,12 +121,7 @@ function CreateCourseForm() {
         </div>
         <div>
             <label htmlFor="course_content">Course Content:</label>
-            <textarea 
-                id="course_content" 
-                placeholder="Enter detailed course content"
-                onChange={handleChange}
-                rows="6"
-            />
+            <EditorContent editor={editor} />
         </div>
         <div>
             <label htmlFor="max_students">Maximum Students:</label>
@@ -125,7 +134,10 @@ function CreateCourseForm() {
                 required
             />
         </div>
-        <button type="submit" onClick={handleSubmit}>Create a New Course</button>
+        <button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Submit New Course"}
+        </button>
+        {error && <div className="error" role="alert">{error}</div>}
     </form>
     );
 }

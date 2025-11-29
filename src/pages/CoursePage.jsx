@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import useCourse from "../hooks/use-course";
 import categoryImages from "../utils/category-images";
+import "./CoursePage.css";
 
 function CoursePage() {
     // Here we use a hook that comes for free in react router called `useParams` to get the id from the URL so that we can pass it to our useCourse hook.
@@ -17,6 +18,10 @@ function CoursePage() {
         return (<p>{error.message}</p>)
     }
 
+        // Add this to debug
+    console.log("Course content:", course.course_content);
+    console.log("Type:", typeof course.course_content);
+
     const formatDate = (iso) => {
         if (!iso) return "";
         const d = new Date(iso);
@@ -29,38 +34,46 @@ function CoursePage() {
     };
 
     return (
-        <div className="course-page">
-            {/* 1. Course Image */}
-            <div className="course-header">
-                <img 
-                    src={categoryImages[course.category] || categoryImages["other"]} 
-                    className="course-detail-image"
+    <div className="course-page">
+        {/* 1. Course Image */}
+        <div className="course-header">
+            <img 
+                src={categoryImages[course.category] || categoryImages["other"]} 
+                className="course-detail-image"
+                alt={course.title}
+            />
+        </div> 
+
+        <div className="course-content">
+            {/* 2. Course Title */}
+            <h1 className="course-title">{course.title}</h1>
+            
+            {/* 3. Category */}
+            <p><strong>Category:</strong> {course.category}</p>
+            
+            {/* 4. By Owner */}
+            <p><strong>By:</strong> {course.owner}</p>
+            
+            {/* 5. Maximum Students */}
+            <p><strong>Maximum Students:</strong> {course.max_students}</p>
+
+            {/* 6. Brief Description */}
+            <div className="brief-description-section">
+                <h3>Brief Description</h3>
+                <p>{course.brief_description}</p>
+            </div>
+
+            {/* 7. Course Content - Formatted from Tiptap */}
+            <div className="course-content-section">
+                <h3>Course Content</h3>
+                <div 
+                    className="rendered-content"
+                    dangerouslySetInnerHTML={{ __html: course.course_content }} 
                 />
-            </div> 
-
-            <div className="course-content">
-                {/* 2. Course Title */}
-                <h1 className="course-title">{course.title}</h1>
-                
-                {/* 3. Category */}
-                <p><strong>Category:</strong> {course.category}</p>
-                
-                {/* 4. By Owner */}
-                <p><strong>By:</strong> {course.owner}</p>
-                
-                {/* 5. Maximum Students */}
-                <p><strong>Maximum Students:</strong> {course.max_students}</p>
-
-                {/* 6. Brief Description */}
-                <p><strong>Brief Description</strong></p>
-                <textarea>{course.brief_description}</textarea>
-
-                {/* 7. Course Content */}
-                <p><strong>Course Content</strong></p>
-                <textarea>{course.course_content}</textarea>
             </div>
         </div>
-    );
+    </div>
+);
 }
 
 export default CoursePage;
