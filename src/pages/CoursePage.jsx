@@ -34,6 +34,11 @@ function CoursePage() {
                 Created by: {course.owner} on {formatDate(course.created_at)}
             </h3>
             <h3 className="text-center">{course.course_content}</h3>
+            {course.image && (
+            <div>
+                <img src={course.image} alt={course.title} />
+            </div>
+            )}
         </div>
     );
 }

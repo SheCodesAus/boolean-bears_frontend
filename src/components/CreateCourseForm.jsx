@@ -13,6 +13,7 @@ function CreateCourseForm() {
         course_content: "",
         category: "",
         max_students: "",
+        image: null,
     });
 
     useEffect(() => {
@@ -39,18 +40,19 @@ function CreateCourseForm() {
             return;
         }
 
-        const newcoursepayload = {
-            title: courseform.title,
-            brief_description: courseform.brief_description,
-            course_content: courseform.course_content,
-            category: courseform.category,
-            max_students: Number(courseform.max_students),
-            is_open: true
-        };
-
+        const formData = new FormData();
+        formData.append("title", courseform.title);
+        formData.append("brief_description", courseform.brief_description);
+        formData.append("course_content", courseform.course_content);
+        formData.append("category", courseform.category);
+        formData.append("max_students", courseform.max_students);
+        formData.append("is_open", true);
+        if (courseform.course_files) {
+        formData.append("course_files", courseform.course_files);
+}
         setLoading(true);
         try {
-            const created = await postCreateCourse(newcoursepayload, auth?.token);
+            const created = await postCreateCourse(formData, auth?.token);
             // navigate to created course page or home
             navigate(`/course/${created.id}`);
         } catch (err) {
@@ -125,6 +127,14 @@ function CreateCourseForm() {
                 required
             />
         </div>
+
+
+        <div>
+        <label htmlFor="image">Upload Image:</label>
+        <input type="file" id="image" onChange={(e) => setCourseform(prev => ({ ...prev, course_files: e.target.files[0] }))} />
+        </div>
+
+
         <button type="submit" onClick={handleSubmit}>Create a New Course</button>
     </form>
     );
