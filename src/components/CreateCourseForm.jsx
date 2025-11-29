@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postCreateCourse from "../api/post-createcourse.js";
 import { useAuth } from "../hooks/use-auth.js";
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import "./CreateCourseForm.css";
 
 function CreateCourseForm() {
     const navigate = useNavigate();
@@ -16,6 +19,17 @@ function CreateCourseForm() {
         image: null,
     });
 
+    // Initialize Tiptap editor
+    const editor = useEditor({
+        extensions: [StarterKit],
+        content: '<p>Start writing your course content...</p>',
+        onUpdate: ({ editor }) => {
+            // Update course_content whenever editor changes
+            const html = editor.getHTML();
+            setCourseform(prev => ({ ...prev, course_content: html }));
+        },
+    });
+
     useEffect(() => {
         if (!auth?.token) {
             navigate("/login");
@@ -25,12 +39,12 @@ function CreateCourseForm() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (event) => {
+    const handleClickChange = (event) => {
         const { id, value } = event.target;
         setCourseform(prev => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = async (event) => {
+    const handleClickSubmit = async (event) => {
         event.preventDefault();
         setError(null);
 
@@ -64,7 +78,7 @@ function CreateCourseForm() {
     };
 
     return (
-    <form>
+    <form onSubmit={handleClickSubmit}>
         {error && <p style={{color: 'red'}}>Error: {error}</p>}
         {loading && <p>Creating course...</p>}
         
@@ -74,7 +88,7 @@ function CreateCourseForm() {
                 type="text"
                 id="title"
                 placeholder="Create course title"
-                onChange={handleChange}
+                onChange={handleClickChange}
                 required
             />
         </div>
@@ -84,7 +98,7 @@ function CreateCourseForm() {
                 type="text" 
                 id="brief_description" 
                 placeholder="Enter brief description of course, max 500 char"
-                onChange={handleChange}
+                onChange={handleClickChange}
                 required
             />
         </div>
@@ -92,7 +106,7 @@ function CreateCourseForm() {
             <label htmlFor="category">Category:</label>
             <select 
                 id="category" 
-                onChange={handleChange}
+                onChange={handleClickChange}
                 required
             >
                 <option value="">--Please choose an option--</option>
@@ -109,12 +123,7 @@ function CreateCourseForm() {
         </div>
         <div>
             <label htmlFor="course_content">Course Content:</label>
-            <textarea 
-                id="course_content" 
-                placeholder="Enter detailed course content"
-                onChange={handleChange}
-                rows="6"
-            />
+            <EditorContent editor={editor} />
         </div>
         <div>
             <label htmlFor="max_students">Maximum Students:</label>
@@ -122,20 +131,15 @@ function CreateCourseForm() {
                 type="number" 
                 id="max_students" 
                 placeholder="Enter maximum number of students"
-                onChange={handleChange}
+                onChange={handleClickChange}
                 min="1"
                 required
             />
         </div>
-
-
-        <div>
-        <label htmlFor="image">Upload Image:</label>
-        <input type="file" id="image" onChange={(e) => setCourseform(prev => ({ ...prev, course_files: e.target.files[0] }))} />
-        </div>
-
-
-        <button type="submit" onClick={handleSubmit}>Create a New Course</button>
+        <button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Submit New Course"}
+        </button>
+        {error && <div className="error" role="alert">{error}</div>}
     </form>
     );
 }

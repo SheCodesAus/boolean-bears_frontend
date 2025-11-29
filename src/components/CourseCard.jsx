@@ -1,17 +1,6 @@
 import { Link } from "react-router-dom";
 import "./CourseCard.css";
-const categoryImages = {
-    "science and technology": "src/assets/arts_crafts.jpeg",
-    "arts and crafts": "src//assets/arts_crafts.jpeg",
-    "reading and writing": "src/assets/reading_writing.jpeg",
-    "music and musical instruments": "src/assets/music.jpeg",
-    "language learning": "src/assets/language.jpeg",
-    "health and wellness": "src/assets/health.jpeg",
-    "business and finance": "src/assets/business.jpeg",
-    "personal development": "src/assets/personal_dev.jpeg",
-    "other": "src/assets/other.jpeg",
-};
-
+import categoryImages from "../utils/category-images";
 
 function CourseCard(props) {
     const { courseData } = props;
