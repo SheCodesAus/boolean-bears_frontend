@@ -61,14 +61,15 @@ function CoursePage() {
     };
 
     return (
-        <div className="course-page">
-            {/* 1. Course Image */}
-            <div className="course-header">
-                <img 
-                    src={categoryImages[course.category] || categoryImages["other"]} 
-                    className="course-detail-image"
-                />
-            </div> 
+    <div className="course-page">
+        {/* 1. Course Image */}
+        <div className="course-header">
+            <img 
+                src={categoryImages[course.category] || categoryImages["other"]} 
+                className="course-detail-image"
+                alt={course.title}
+            />
+        </div> 
 
             <div className="course-content">
                 {/* 2. Course Title */}
@@ -90,7 +91,9 @@ function CoursePage() {
                 {/* 7. Course Content */}
                 <div>
                     <h3><strong>Course Content</strong> </h3> 
-                    <div>{course.course_content}</div>
+                    <div
+                    dangerouslySetInnerHTML={{ __html: course.course_content}}
+                    />
                 </div>
 
                 {isOwner && (

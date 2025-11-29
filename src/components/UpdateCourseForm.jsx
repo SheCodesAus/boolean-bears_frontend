@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth";
 import putCourse from "../api/put-course";
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
 
 function UpdateCourseForm({ existingData, setUpdateMessage }) {
     const navigate = useNavigate();
@@ -15,6 +17,23 @@ function UpdateCourseForm({ existingData, setUpdateMessage }) {
         category: existingData.category || "",
         max_students: String(existingData.max_students || ""), // Convert numbers to strings for input fields
     });
+
+    // Initialize Tiptap editor
+    const editor = useEditor({
+        extensions: [StarterKit],
+        content: '<p>Start writing your course content...</p>',
+        onUpdate: ({ editor }) => {
+            // Update course_content whenever editor changes
+            const html = editor.getHTML();
+            setCourseForm(prev => ({ ...prev, course_content: html }));
+        },
+    });
+
+    useEffect(() => {
+        if (editor && existingData?.course_content) {
+            editor.commands.setContent(existingData.course_content);
+        }
+    }, [editor, existingData]);
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -89,7 +108,8 @@ function UpdateCourseForm({ existingData, setUpdateMessage }) {
                 <label htmlFor="brief_description">Brief Description:</label>
                 <textarea 
                     id="brief_description" 
-                    value={courseForm.brief_description} 
+                    value={courseForm.brief_description}
+                    placeholder="Enter brief description of course, max 500 char" 
                     onChange={handleClickChange} 
                     rows="3"
                     required 
@@ -98,12 +118,7 @@ function UpdateCourseForm({ existingData, setUpdateMessage }) {
 
             <div>
                 <label htmlFor="course_content">Detailed Content:</label>
-                <textarea 
-                    id="course_content" 
-                    value={courseForm.course_content} 
-                    onChange={handleClickChange} 
-                    rows="6"
-                />
+                <EditorContent editor={editor} />
             </div>
             
             <div>
