@@ -38,12 +38,12 @@ function CreateCourseForm() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (event) => {
+    const handleClickChange = (event) => {
         const { id, value } = event.target;
         setCourseform(prev => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = async (event) => {
+    const handleClickSubmit = async (event) => {
         event.preventDefault();
         setError(null);
 
@@ -96,7 +96,7 @@ function CreateCourseForm() {
                 type="text" 
                 id="brief_description" 
                 placeholder="Enter brief description of course, max 500 char"
-                onChange={handleChange}
+                onChange={handleClickChange}
                 required
             />
         </div>
@@ -104,7 +104,7 @@ function CreateCourseForm() {
             <label htmlFor="category">Category:</label>
             <select 
                 id="category" 
-                onChange={handleChange}
+                onChange={handleClickChange}
                 required
             >
                 <option value="">--Please choose an option--</option>
