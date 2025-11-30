@@ -5,6 +5,7 @@ import categoryImages from "../utils/category-images";
 function CourseCard(props) {
     const { courseData } = props;
     const courseLink = `course/${courseData.id}`;
+    const likesCount = courseData?.likes_count ?? courseData?.likes ?? 0;
 
     return (
         <div className="course-card">
@@ -18,6 +19,7 @@ function CourseCard(props) {
                     alt={courseData.category} 
                     className="course-image"
                 />
+                <span className="likes">❤️ {likesCount}</span>
 
             {/* Add the Button Here */}
             <button className="btn-learn-more">
