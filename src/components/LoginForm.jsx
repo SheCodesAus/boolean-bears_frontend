@@ -45,25 +45,25 @@ function LoginForm() {
         <form>
             <h2>LOG IN</h2>
             <div>
-                <label htmlFor="username">USER NAME</label>
+                <label htmlFor="username">Username</label>
                 <input 
                     type="text" 
                     id="username" 
-                    placeholder="USER NAME" 
+                    placeholder="Username" 
                     onChange={handleChange}
                 />
             </div>
             <div>
-                <label htmlFor="password">PASSWORD</label>
+                <label htmlFor="password">Password</label>
                 <input 
                     type="password" 
                     id="password" 
-                    placeholder="PASSWORD" 
+                    placeholder="Password" 
                     onChange={handleChange}
                 />
             </div>
             <button type="submit" onClick={handleSubmit}>
-                LOG IN
+                Log In
             </button>
             <div className="signup-prompt">
                 Don't have an account yet?
