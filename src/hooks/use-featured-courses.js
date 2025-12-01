@@ -6,7 +6,7 @@ export default function useFeaturedCourses() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const url = `${import.meta.env.VITE_API_URL}/courses/featured`; 
+        const url = `${import.meta.env.VITE_API_URL}/courses/features`; 
         fetch(url)
             .then((res) => {
                 if (!res.ok) throw new Error(`Failed to load featured (status ${res.status})`);
