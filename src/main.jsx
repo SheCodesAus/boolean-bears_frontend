@@ -10,7 +10,6 @@ import CreateCoursePage from "./pages/CreateCoursePage.jsx";
 import CreateAccountPage from "./pages/CreateAccountPage.jsx"; 
 
 import NavBar from "./components/NavBar.jsx";
-import About from "./pages/AboutPage.jsx";
 import { AuthProvider } from './components/AuthProvider.jsx';
 import UpdateCoursePage from "./pages/UpdateCoursePage.jsx";
 
@@ -22,7 +21,6 @@ const router = createBrowserRouter([
           { path: "/", element: <HomePage /> },
           { path: "/about", element: <AboutPage /> },
           { path: "/course/:id", element: <CoursePage /> },
-          { path: "/about", element: <About /> },
           { path: "/login", element: <LoginPage /> },
           { path: "/course/update/:id", element: <UpdateCoursePage /> },
           { path: "/createcourse", element: <CreateCoursePage /> },
