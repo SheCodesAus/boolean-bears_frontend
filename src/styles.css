@@ -8,7 +8,7 @@
 
 :root {
     /* colour */
-    --brand:  #fc6055;
+    --brand: #fc6055;
     --action: #feaf00;
     --highlight: #007c82;
     --white: #ffffff;
@@ -17,38 +17,54 @@
     --black: #111111;
 
     /* padding */
-    --padding-base:8px;
+    --padding-base: 8px;
     --padding-medium: calc(var(--padding-base)*2);
     --padding-large: calc(var(--padding-base)*4);
     --padding-xl: calc(var(--padding-base)*6);
-    
+
     /* fonts */
     --font-sourcesans: "Source Sans 3", sans-serif;
     --font-playfair: "Playfair Display", monospace;
 }
 
-/* Hover state */
-nav a:hover {
-    background-color: #58d41e;
+/* Base page styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sourcesans);
+    color: var(--black);
+    background-color: #f7fafc;
+    /* soft neutral background */
 }
+
+/* Headings use your display font */
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-playfair);
+    letter-spacing: 0.03em;
+}
+
+
+/* need to build reuseable button styles? Then it can be used across multiple pages for consistency */
 
 /* Media queries for smaller screens */
 @media (max-width: 768px) {
     body {
         padding: 0 var(--padding-base);
     }
-    
+
     h1 {
         font-size: x-large;
     }
-    
+
     h2 {
         font-size: large;
     }
-    
+
     #navbar {
         flex-direction: column;
         gap: var(--padding-base);
     }
-    }
-
+}
