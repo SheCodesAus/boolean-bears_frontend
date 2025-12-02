@@ -15,6 +15,7 @@ import useComments from "../hooks/use-comment";
 import CommentForm from "../components/CommentForm";
 import CommentList from "../components/CommentList";
 import categoryImages from "../utils/category-images";
+import { handleFileUpload } from "../api/post-uploadandregister";
 
 function CoursePage() {
     const navigate = useNavigate();
@@ -87,7 +88,17 @@ function CoursePage() {
     if (!course) {
         return (<p>Course not found</p>)
     }
-
+    const handleFileInputChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                await handleFileUpload(file, id, auth.token);
+                window.location.reload(); // Refresh course data
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    };
     // Check if logged-in user is the owner
     const isOwner = auth?.username === course.owner;
 
@@ -128,6 +139,22 @@ function CoursePage() {
     const handleCommentAdded = (newComment) => {
         addComment(newComment);
     };
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const getFileTypeIcon = (type) => {
+        if (!type || typeof type !== 'string') return '📁'; 
+        if (type.startsWith('image/')) return '🖼️';
+        if (type.startsWith('video/')) return '🎥';
+        if (type === 'application/pdf') return '📄';
+        return '📁';
+    };
+
 
     return (
     <div className="course-page">
@@ -176,7 +203,44 @@ function CoursePage() {
                     />
                 </div>
 
-                {/* 8. Update and Delete buttons (only visible to owner) */}
+                {/* 8. Course Materials */}
+                <div >
+                    <strong>Files</strong>
+                    {console.log('uploaded_files:', course.uploaded_files)}
+
+                {course.uploaded_files?.length > 0 && (
+                    <div className="uploaded-files">
+                        <h3>Recently Uploaded Files</h3>
+                        <div className="files-list">
+                            {course.uploaded_files.map((file, index) => {
+                                const uploadedAt = file.uploaded_at || file.uploadedAt;
+                                const publicUrl = file.public_url || file.publicUrl;
+                            <input type="file" onChange={handleFileInputChange} />
+
+                                return (
+                                    <div key={index} className="uploaded-file-item">
+                                        <span className="file-icon">{getFileTypeIcon(file.type)}</span>
+                                        <div className="file-info">
+                                            <div className="file-name">{file.name}</div>
+                                            <div className="file-meta">
+                                                {formatFileSize(file.size)} • Uploaded {uploadedAt ? formatDate(uploadedAt) : '—'}
+                                            </div>
+                                            {publicUrl && (
+                                                <div className="file-url">
+                                                    <a href={publicUrl} target="_blank" rel="noopener noreferrer">
+                                                        🌐 View Public Link
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}               
+                </div>
+                {/* To display uploaded files ends */}
                 {isOwner && (
                     <div className="course-actions">
                         <button 
