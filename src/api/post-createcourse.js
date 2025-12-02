@@ -1,18 +1,17 @@
 async function postCreateCourse(payload, token) {
     const url = `${import.meta.env.VITE_API_URL}/courses/`;
-    
-    const headers = {
-        "Content-Type": "application/json",
-    };
-    
-    if (token) {
-        headers["Authorization"] = `Token ${token}`;
-    }
-    
+    const isForm = typeof FormData !== 'undefined' && payload instanceof FormData;
+
+    const headers = {};
+    if (token) headers["Authorization"] = `Token ${token}`;
+
+    // Important: do NOT set Content-Type for FormData; the browser will set the correct boundary
+    if (!isForm) headers["Content-Type"] = "application/json";
+
     const response = await fetch(url, {
-        method: "POST", // We need to tell the server that we are sending JSON data so we set the Content-Type header to application/json
+        method: "POST",
         headers,
-        body: JSON.stringify(payload),
+        body: isForm ? payload : JSON.stringify(payload),
     });
 
     if (!response.ok) {
