@@ -1,10 +1,10 @@
 import React from "react";
-import "./About.css";
+import "./AboutPage.css";
 
 const teamMembers = [
     {
         name: "Arsen ILHAN",
-        role: "Backend Wizard & Adventous Learner",
+        role: "Backend Wizard & Adventurous Learner",
         image: "src/assets/Arsen.jpg",
         bio: "Arsen brings backend mastery and a fearless love of learning, eagerly jumping into new challenges and supporting her team at every turn.",
     },

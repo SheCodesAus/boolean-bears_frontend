@@ -1,17 +1,82 @@
 import { useNavigate, useParams } from "react-router-dom";
-import useCourse from "../hooks/use-course";
-import categoryImages from "../utils/category-images";
+import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/use-auth";
+import { ThumbsUp } from "lucide-react";
+import { categoryDisplay } from "../utils/category-display";
+
+// API Imports
+import postLike from "../api/post-likecourse";
 import deleteCourse from "../api/delete-course";
+
+// Hook Imports
+import useCourse from "../hooks/use-course";
+import useComments from "../hooks/use-comment";
+
+// Components Imports
+import CommentForm from "../components/CommentForm";
+import CommentList from "../components/CommentList";
+import categoryImages from "../utils/category-images";
+import { handleFileUpload } from "../api/post-uploadandregister";
 
 function CoursePage() {
     const navigate = useNavigate();
     // Here we use a hook that comes for free in react router called `useParams` to get the id from the URL so that we can pass it to our useCourse hook.
     const { id } = useParams();
+    const [likes, setLikes] = useState(0); // Stores the number of likes for the course
+    const [hasLiked, setHasLiked] = useState(false);
+    const [liking, setLiking] = useState(false);
     const { auth } = useAuth();
 
-    // useCourse returns three pieces of info, so we need to grab them all here
+    // Fetch Course Data
     const { course, isLoading, error } = useCourse(id);
+
+    // Fetch comments data
+    const {
+        comments,
+        isLoading: commentsLoading,
+        error: commentsError,
+        addComment
+    } = useComments(id);
+    
+    /////// Likes /////////
+    useEffect(() => {
+    // Always sync likes from server - use same fallback as CourseCard
+    const serverLikes = course?.likes_count ?? course?.likes ?? 0;
+    if (typeof serverLikes === "number") {
+        setLikes(serverLikes);
+    }
+    // Initialize hasLiked from server flag if available, else from localStorage
+    if (course?.user_has_liked === true) {
+        setHasLiked(true);
+    } else {
+        // Include username in the key so each user has their own like state
+        const key = `liked_course_${id}_${auth?.username || 'anonymous'}`;
+        setHasLiked(localStorage.getItem(key) === "1");
+    }
+}, [course, id, auth?.username]); // added auth?.username to dependencies
+
+    const incrementLikes = async () => {
+        if (hasLiked || liking) return; // block repeat
+        setLiking(true);
+
+        setLikes(l => l + 1);
+        try {
+            const res = await postLike(id, auth?.token);
+            // Use same fallback for response
+            const newLikes = res?.likes_count ?? res?.likes;
+            if (typeof newLikes === "number") setLikes(newLikes);
+            setHasLiked(true);
+            // Store with username-specific key
+            const key = `liked_course_${id}_${auth?.username || 'anonymous'}`;
+            localStorage.setItem(key, "1");
+        } catch (e) {
+            setLikes(l => Math.max(0, l - 1));
+            alert(e.message || "Could not register like. Please try again.");
+        } finally {
+            setLiking(false);
+        }
+        };
+//     // likes ended///////
     
     if (isLoading) {
         return (<p>loading...</p>)
@@ -24,9 +89,20 @@ function CoursePage() {
     if (!course) {
         return (<p>Course not found</p>)
     }
-
+    const handleFileInputChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                await handleFileUpload(file, id, auth.token);
+                window.location.reload(); // Refresh course data
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    };
     // Check if logged-in user is the owner
     const isOwner = auth?.username === course.owner;
+
 
     const formatDate = (iso) => {
         if (!iso) return "";
@@ -60,6 +136,33 @@ function CoursePage() {
         }
     };
 
+    // Handler for when a new comment is added
+    const handleCommentAdded = (newComment) => {
+        addComment(newComment);
+    };
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const getFileTypeIcon = (type) => {
+        if (!type || typeof type !== 'string') return '📁'; 
+        if (type.startsWith('image/')) return '🖼️';
+        if (type.startsWith('video/')) return '🎥';
+        if (type === 'application/pdf') return '📄';
+        return '📁';
+    };
+
+    // Optional: decode if your API returns &lt;...&gt; entities
+        const decodeHTML = (html) => {
+        const el = document.createElement('textarea');
+        el.innerHTML = html ?? '';
+        return el.value;
+        };
+
     return (
     <div className="course-page">
         {/* 1. Course Image */}
@@ -70,32 +173,53 @@ function CoursePage() {
                 alt={course.title}
             />
         </div> 
-
+        <div className="image-likes">
+            <button
+                className="like-button"
+                onClick={incrementLikes}
+                aria-label="Like this course"
+                disabled={hasLiked || liking}
+                title={hasLiked ? "You already liked this course" : "Like this course"}
+            >
+                <ThumbsUp />
+            </button>
+            <span className="likes-count">{likes} Likes</span>
+        </div>
             <div className="course-content">
                 {/* 2. Course Title */}
                 <h1 className="course-title">{course.title}</h1>
                 
                 {/* 3. Category */}
-                <h3><strong>Category:</strong> {course.category}</h3>
+                <h2>{categoryDisplay[course.category] || course.category}</h2>
                 
                 {/* 4. By Owner */}
-                <h3><strong>By:</strong> {course.owner}</h3>
-                
-                {/* 5. Maximum Students */}
-                <h3><strong>Maximum Students:</strong> {course.max_students}</h3>
+                <h3><strong>by</strong> {course.owner}</h3>
 
-                {/* 6. Brief Description */}
-                <h3><strong>Brief Description</strong></h3>
+                {/* 5. Brief Description */}
                 <p>{course.brief_description}</p>
 
-                {/* 7. Course Content */}
+                {/* 6. Course Content */}
                 <div>
-                    <h3><strong>Course Content</strong> </h3> 
-                    <div
-                    dangerouslySetInnerHTML={{ __html: course.course_content}}
-                    />
+                <h3><strong>Course Content</strong></h3>
+                <div
+                    className="rendered-content"
+                    dangerouslySetInnerHTML={{ __html: decodeHTML(course.course_content) }}
+                />
                 </div>
 
+                {/* 8. Course Materials */}
+                <div className="course-materials">
+                    <h3><strong>Course Materials</strong></h3>
+                    {course.image ? ( 
+                        <a href ={course.image} target="_blank" rel="noopener noreferrer">
+                            View Course Material
+                        </a>
+
+                    ) : (
+                        <p>No files uploaded for this course.</p>
+                    )} </div>
+
+                {/* To display uploaded files ends */}
                 {isOwner && (
                     <div className="course-actions">
                         <button 
@@ -112,6 +236,22 @@ function CoursePage() {
                         </button>
                     </div>
                 )}
+
+               {/* 9. Comments Section  */}
+                <div className="comments-section">
+                    <hr />
+                    {/* Comment form */}
+                    <CommentForm
+                        courseId={id}
+                        onCommentAdded={handleCommentAdded}
+                    />
+                    {/* Comment List */}
+                    <CommentList
+                        comments={comments}
+                        isLoading={commentsLoading}
+                        error={commentsError}
+                    />
+                </div>
             </div>
         </div>
     );

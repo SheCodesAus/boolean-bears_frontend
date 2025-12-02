@@ -1,6 +1,122 @@
+/* Page container */
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--padding-large) var(--padding-medium);
+}
+
+/* All Courses grid */
 #course-list {
   display: grid;
-  grid-template-columns: 30% 30% 30%;
-  column-gap: 10px;
-  row-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: 1fr; /* make each grid row cells equal height so cards stretch */
+  gap: 16px;
+}
+
+.all-courses-section h2 {
+  margin: 0 0 var(--padding-medium);
+}
+
+/* Search bar */
+.search-row {
+  margin: 8px 0 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 300px; /* match card min width */
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d7de;
+  font-family: var(--font-sourcesans);
+}
+
+.sort-select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d7de;
+  font-family: var(--font-sourcesans);
+  margin-left: auto; /* push to right side */
+}
+
+/* Utility for accessible, visually hidden labels */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* Featured Courses (page-specific) */
+.featured-section {
+  margin: var(--padding-xl) 0;
+}
+
+.featured-section h2 {
+  margin: 0 0 var(--padding-medium);
+}
+
+.featured-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 16px;
+}
+
+/* Carousel styles for Featured */
+.carousel {
+  position: relative;
+}
+
+.carousel-track {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.carousel-track > * {
+  flex: 0 0 340px;
+  scroll-snap-align: start;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--action);
+  color: var(--black);
+  font-size: 22px;
+  line-height: 36px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.carousel-btn:hover { background: var(--brand); color: var(--white); }
+.carousel-btn.prev { left: -6px; }
+.carousel-btn.next { right: -6px; }
+
+@media (max-width: 768px) {
+  .featured-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .carousel-track > * { flex-basis: 85%; }
+  .carousel-btn.prev { left: 4px; }
+  .carousel-btn.next { right: 4px; }
 }

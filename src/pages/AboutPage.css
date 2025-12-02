@@ -1,0 +1,149 @@
+/* === Hero section ===================================== */
+
+.about-hero {
+    background-color: #e6f4ff;
+    /* soft blue panel */
+    padding: 3rem 1rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.about-hero-content {
+    max-width: 960px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-hero h1 {
+    font-size: 2.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.about-hero p {
+    font-size: 1.1rem;
+    color: var(--base-dark);
+}
+
+/* === Generic sections ================================= */
+
+.about-section {
+    max-width: 960px;
+    margin: 0 auto 2.5rem;
+    padding: 0 1rem;
+}
+
+.about-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+}
+
+.about-section p {
+    line-height: 1.6;
+}
+
+/* === Team cards ======================================= */
+
+.team-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* increased min width */
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+
+.team-card {
+    background-color: var(--white);
+    border-radius: 18px;
+    padding: 1.5rem 1.25rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.team-card img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.75rem;
+}
+
+.team-card h3:first-of-type {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.team-card h3:nth-of-type(2) {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--highlight);
+    margin-bottom: 0.5rem;
+}
+
+.team-card p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* === Journey / timeline =============================== */
+
+.journey {
+    margin-top: 3rem;
+}
+
+.timeline-container {
+    margin-top: 1.5rem;
+    border-left: 3px solid var(--highlight);
+    padding-left: 1.5rem;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--action);
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.timeline-content h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+}
+
+.timeline-content p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* === Responsive tweaks ================================ */
+
+@media (max-width: 768px) {
+    .about-hero {
+        padding: 2.25rem 1rem;
+    }
+
+    .about-hero h1 {
+        font-size: 2rem;
+    }
+
+    .about-section {
+        margin-bottom: 2rem;
+    }
+
+    .timeline-container {
+        border-left-width: 2px;
+        padding-left: 1rem;
+    }
+}

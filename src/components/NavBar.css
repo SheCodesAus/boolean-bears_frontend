@@ -1,19 +1,79 @@
+/* Main bar */
 #navbar {
+    background-color: var(--highlight);
+    /* teal bar */
+    color: var(--white);
+    padding: 0.6rem 2rem;
     display: flex;
-    font-family: "Source Sans 3", sans-serif; 
-    font-size: large;
-    font-weight: bold;
-    justify-content: space-around;
     align-items: center;
-    padding: var(--padding-medium);
-    background-color: var(--brand);
+    gap: 0.75rem;
+    font-family: var(--font-sourcesans);
 }
 
-.navbar-user {
-    font-family: "Source Sans 3", sans-serif;
-    font-size: large;
-    font-weight: bold;
-    color: var(--base-dark);
+/* Links inside the nav */
+#navbar a {
+    color: var(--white);
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    /* pill-shaped */
+    background-color: rgba(255, 255, 255, 0.18);
     font-size: 0.9rem;
-    margin-right: 1rem;
+    text-decoration: none;
+    /* remove underline */
+}
+
+/* Keep Home on the left, push the rest to the right */
+#navbar a:first-of-type {
+    margin-right: auto;
+}
+
+/* Logo link should not look like a pill button */
+.logo-link {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+.navbar-logo {
+    display: block;
+    height: 36px;
+}
+
+/* Primary call-to-action: Create A Course */
+#navbar a[href="/createcourse"] {
+    background-color: var(--action);
+    /* amber */
+    color: var(--black);
+    font-weight: 600;
+}
+
+/* Hover state – scoped to this nav only */
+#navbar a:hover {
+    background-color: var(--brand);
+    /* coral */
+    color: var(--white);
+}
+
+/* Prevent hover background on the logo */
+.logo-link:hover {
+    background: transparent;
+}
+
+/* "Hello, User" label */
+.navbar-user {
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Responsive tweak for smaller screens */
+@media (max-width: 768px) {
+    #navbar {
+        flex-wrap: wrap;
+        row-gap: 0.4rem;
+        padding: 0.6rem 1rem;
+    }
+
+    #navbar a:first-of-type {
+        margin-right: 0;
+        width: auto;
+    }
 }

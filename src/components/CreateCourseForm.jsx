@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postCreateCourse from "../api/post-createcourse.js";
+import postCreateImageURL from "../api/post-createimageurl.js";
+
 import { useAuth } from "../hooks/use-auth.js";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import "./CreateCourseForm.css";
+import axios from 'axios'; 
 
 function CreateCourseForm() {
     const navigate = useNavigate();
@@ -15,14 +18,191 @@ function CreateCourseForm() {
         brief_description: "",
         course_content: "",
         category: "",
-        max_students: "",
         image: null,
     });
+
+    // This code is for file upload handling (using AWS S3 presigned URLs)
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadStatus, setUploadStatus] = useState('');
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+
+
+    // we will list all file types with size limits
+    const supportedTypes = {
+    'image/jpeg': { extensions: '.jpg, .jpeg', maxSize: 15 * 1024 * 1024 }, // 15MB
+    'image/png': { extensions: '.png', maxSize: 15 * 1024 * 1024 },         // 15MB
+    'video/mp4': { extensions: '.mp4', maxSize: 500 * 1024 * 1024 },        // 500MB
+    'video/quicktime': { extensions: '.mov', maxSize: 500 * 1024 * 1024 },  // 500MB
+    'application/pdf': { extensions: '.pdf', maxSize: 50 * 1024 * 1024 }    // 50MB
+    };
+
+
+    //---------handle file selection and validation----------
+    const handleFileSelect = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        const fileTypeConfig = supportedTypes[file.type];
+        const maxSize = fileTypeConfig.maxSize;
+        const maxSizeMB = maxSize / (1024 * 1024);
+
+        if (!fileTypeConfig) {
+        setUploadStatus('Error: Unsupported file type. Please select JPEG, PNG, MP4, MOV, or PDF files.');
+        } else if (file.size > maxSize) {
+        setUploadStatus(`Error: File size too large. Maximum size for ${file.type} is ${maxSizeMB}MB.`);
+        return;
+        }
+        setSelectedFile(file);
+        setUploadStatus('');
+        setUploadProgress(0);
+    };
+    //---------handle file selection and validation ends----------
+
+    //---------handle file upload to S3 using presigned URL--------
+
+    const getPresignedUrl = async (file) => {
+                console.log('[Presign] payload:', {
+            file_name: file.name,
+            file_type: file.type,
+            file_size: file.size
+        });
+        try {
+            const response = await postCreateImageURL({          
+                file_name: file.name,
+                file_type: file.type,
+                file_size: file.size
+            }, auth?.token);
+        // Log presigned fields
+        const { upload_url, fields, file_key, public_url, expires_in } = response || {};
+        console.log('[Presign] upload_url:', upload_url);
+        console.log('[Presign] file_key:', file_key);
+        console.log('[Presign] public_url:', public_url);
+        console.log('[Presign] expires_in:', expires_in);
+
+        // Individual S3 form fields
+        console.log('[Presign] fields:', fields);
+        console.log('[Presign] Content-Type:', fields?.['Content-Type']);
+        console.log('[Presign] key:', fields?.key);
+        console.log('[Presign] policy:', fields?.policy);
+        console.log('[Presign] signature:', fields?.signature);
+        console.log('[Presign] AWSAccessKeyId:', fields?.AWSAccessKeyId);            
+            return response;
+        } catch (error) {
+            console.error('Error getting presigned URL:', error);
+            if (error.response && error.response.data && error.response.data.error) {
+                throw new Error(error.response.data.error);
+        }
+            throw new Error('Failed to get upload URL from server');
+        }
+    };
+
+    const uploadToS3 = async (file, presignedData) => {
+        const formData = new FormData();
+    console.log('[S3Upload] about to POST with fields:', presignedData?.fields);
+    console.log('[S3Upload] Content-Type:', presignedData?.fields?.['Content-Type']);
+    console.log('[S3Upload] key:', presignedData?.fields?.key);
+    console.log('[S3Upload] policy:', presignedData?.fields?.policy);
+    console.log('[S3Upload] signature:', presignedData?.fields?.signature);
+    console.log('[S3Upload] AWSAccessKeyId:', presignedData?.fields?.AWSAccessKeyId);
+
+        // Add fields from presigned POST
+        Object.keys(presignedData.fields).forEach(key => {
+        formData.append(key, presignedData.fields[key]);
+        });
+        
+        // Add the file last
+        formData.append('file', file);
+
+        try {
+        await axios.post(presignedData.upload_url, formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
+            },
+        });
+        
+        return presignedData.file_key;
+        } catch (error) {
+        console.error('Error uploading to S3:', error);
+        throw new Error('Failed to upload file to storage');
+        }
+    };
+
+    const handleUpload = async () => {
+        if (!selectedFile) {
+        setUploadStatus('Please select a file first');
+        return;
+        }
+
+        setIsUploading(true);
+        setUploadStatus('Starting upload...');
+        setUploadProgress(0);
+
+        try {
+        // Step 1: Get presigned URL
+        setUploadStatus('Getting upload URL...');
+        const presignedData = await getPresignedUrl(selectedFile);
+
+        // Step 2: Upload to S3
+        setUploadStatus('Uploading file...');
+        const fileKey = await uploadToS3(selectedFile, presignedData);
+
+        // Step 3: Success
+        setUploadStatus('Upload completed successfully!');
+        setUploadProgress(100);
+        
+        // Add to uploaded files list
+        const uploadedFile = {
+            name: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size,
+            fileKey: fileKey,
+            publicUrl: presignedData.public_url, // Add public URL
+            uploadedAt: new Date().toISOString()
+        };
+        console.log('[Upload] constructed uploadedFile:', uploadedFile);
+
+        setUploadedFiles(prev => [uploadedFile, ...prev]);
+        
+        // Reset form
+        setSelectedFile(null);
+        document.getElementById('file-input').value = '';
+
+        } catch (error) {
+        setUploadStatus(`Upload failed: ${error.message}`);
+        setUploadProgress(0);
+        } finally {
+        setIsUploading(false);
+        }
+    };    
+
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const getFileTypeIcon = (type) => {
+        if (type.startsWith('image/')) return '🖼️';
+        if (type.startsWith('video/')) return '🎥';
+        if (type === 'application/pdf') return '📄';
+        return '📁';
+    };
 
     // Initialize Tiptap editor
     const editor = useEditor({
         extensions: [StarterKit],
-        content: '<p>Start writing your course content...</p>',
+        content: '<p>Use your preferred word processing program to write your course and then paste it here! Add headings, bold/italic, lists, quotes, and code—your formatting will be saved.</p>',
         onUpdate: ({ editor }) => {
             // Update course_content whenever editor changes
             const html = editor.getHTML();
@@ -61,9 +241,7 @@ function CreateCourseForm() {
         formData.append("category", courseform.category);
         formData.append("max_students", courseform.max_students);
         formData.append("is_open", true);
-        if (courseform.course_files) {
-        formData.append("course_files", courseform.course_files);
-}
+        formData.append("image",uploadedFiles.length > 0 ? uploadedFiles[0].publicUrl : undefined); // use first uploaded file as image
         setLoading(true);
         try {
             const created = await postCreateCourse(formData, auth?.token);
@@ -78,69 +256,164 @@ function CreateCourseForm() {
     };
 
     return (
-    <form onSubmit={handleClickSubmit}>
-        {error && <p style={{color: 'red'}}>Error: {error}</p>}
-        {loading && <p>Creating course...</p>}
-        
-        <div>
-            <label htmlFor="title">Title:</label>
-            <input 
-                type="text"
-                id="title"
-                placeholder="Create course title"
-                onChange={handleClickChange}
-                required
-            />
-        </div>
-        <div>
-            <label htmlFor="brief_description">Description of course:</label>
-            <input 
-                type="text" 
-                id="brief_description" 
-                placeholder="Enter brief description of course, max 500 char"
-                onChange={handleClickChange}
-                required
-            />
-        </div>
-        <div>
-            <label htmlFor="category">Category:</label>
-            <select 
-                id="category" 
-                onChange={handleClickChange}
-                required
-            >
-                <option value="">--Please choose an option--</option>
-                <option value="science and technology">Science and Technology</option>
-                <option value="arts and crafts">Arts and Crafts</option>
-                <option value="reading and writing">Reading and Writing</option>
-                <option value="music and musical instruments">Music and Musical Instruments</option>
-                <option value="language learning">Language Learning</option>
-                <option value="health and wellness">Health and Wellness</option>
-                <option value="business and finance">Business and Finance</option>
-                <option value="personal development">Personal Development</option>
-                <option value="other">Other</option>
-            </select>
-        </div>
-        <div>
-            <label htmlFor="course_content">Course Content:</label>
-            <EditorContent editor={editor} />
-        </div>
-        <div>
-            <label htmlFor="max_students">Maximum Students:</label>
-            <input 
-                type="number" 
-                id="max_students" 
-                placeholder="Enter maximum number of students"
-                onChange={handleClickChange}
-                min="1"
-                required
-            />
-        </div>
-        <button type="submit" disabled={loading}>
-            {loading ? "Creating..." : "Submit New Course"}
-        </button>
-        {error && <div className="error" role="alert">{error}</div>}
-    </form>
+        <form className="form-grid create-course-form" onSubmit={handleClickSubmit}>
+            {error && <p style={{ color: "red" }}>Error: {error}</p>}
+            {loading && <p>Creating course...</p>}
+
+            <div className="form-field">
+                <label htmlFor="title">Title</label>
+                <input
+                    type="text"
+                    id="title"
+                    placeholder="Create course title"
+                    onChange={handleClickChange}
+                    required
+                />
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="brief_description">Brief description of course</label>
+                <input
+                    type="text"
+                    id="brief_description"
+                    placeholder="Enter brief description of course, max 250 characters"
+                    maxLength={250}
+                    onChange={handleClickChange}
+                    required
+                />
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="category">Category</label>
+                <select
+                    id="category"
+                    onChange={handleClickChange}
+                    required
+                >
+                    <option value="">--Please choose an option--</option>
+                    {/* existing options unchanged */}
+                    <option value="science and technology">Science and Technology</option>
+                    <option value="arts and crafts">Arts and Crafts</option>
+                    <option value="reading and writing">Reading and Writing</option>
+                    <option value="music and musical instruments">Music and Musical Instruments</option>
+                    <option value="language learning">Foreign Languages</option>
+                    <option value="health and wellness">Health and Wellness</option>
+                    <option value="business and finance">Business and Finance</option>
+                    <option value="personal development">Personal Development</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="course_content">Course Content</label>
+                <EditorContent editor={editor} className="tiptap" />
+            </div>
+
+
+        <div className="file-uploader">
+            <div className="upload-section">
+                <h2>Upload Files to S3</h2>
+                <p className="upload-description">
+                Upload images, videos, and PDFs to S3 storage. 
+                <br />Supported: JPEG/PNG (15MB max), MP4/MOV (500MB max), PDF (50MB max)
+                </p>
+
+                <div className="file-input-container">
+                <input
+                    id="file-input"
+                    type="file"
+                    accept="image/jpeg,image/png,video/mp4,video/quicktime,application/pdf"
+                    onChange={handleFileSelect}
+                    disabled={isUploading}
+                    className="file-input"
+                />
+                <label htmlFor="file-input" className={`file-input-label ${isUploading ? 'disabled' : ''}`}>
+                    Choose File
+                </label>
+                </div>
+
+                {selectedFile && (
+                <div className="selected-file">
+                    <div className="file-info">
+                    <span className="file-icon">{getFileTypeIcon(selectedFile.type)}</span>
+                    <div className="file-details">
+                        <strong>{selectedFile.name}</strong>
+                        <div className="file-meta">
+                        {selectedFile.type} • {formatFileSize(selectedFile.size)}
+                        </div>
+                    </div>
+                    </div>
+                    
+                    <button
+                    type="button"
+                    onClick={handleUpload}
+                    disabled={isUploading}
+                    className={`upload-button ${isUploading ? 'uploading' : ''}`}
+                    >
+                    {isUploading ? 'Uploading...' : 'Upload File'}
+                    </button>
+                </div>
+                )}
+
+                {uploadProgress > 0 && (
+                <div className="progress-container">
+                    <div className="progress-bar">
+                    <div 
+                        className="progress-fill" 
+                        style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                    </div>
+                    <span className="progress-text">{uploadProgress}%</span>
+                </div>
+                )}
+
+                {uploadStatus && (
+                <div className={`status-message ${uploadStatus.startsWith('Error') || uploadStatus.includes('failed') ? 'error' : uploadStatus.includes('success') ? 'success' : 'info'}`}>
+                    {uploadStatus}
+                </div>
+                )}
+            </div>
+
+            {uploadedFiles.length > 0 && (
+                <div className="uploaded-files">
+                <h3>Recently Uploaded Files</h3>
+                <div className="files-list">
+                    {uploadedFiles.map((file, index) => (
+                    <div key={index} className="uploaded-file-item">
+                        <span className="file-icon">{getFileTypeIcon(file.type)}</span>
+                        <div className="file-info">
+                        <div className="file-name">{file.name}</div>
+                        <div className="file-meta">
+                            {formatFileSize(file.size)} • Uploaded {new Date(file.uploadedAt).toLocaleString()}
+                        </div>
+                        {/* <div className="file-key">S3 Key: {file.fileKey}</div> */}
+                        {file.publicUrl && (
+                            <div className="file-url">
+                            <a href={file.publicUrl} target="_blank" rel="noopener noreferrer" className="public-link">
+                                🌐 View Public Link
+                            </a>
+                            </div>
+                        )}
+                        </div>
+                    </div>
+                    ))}
+                </div>
+                </div>
+            )}
+            </div>
+
+            <div className="form-actions">
+                <button type="submit" disabled={loading} className="primary-btn">
+                    {loading ? "Creating..." : "Submit New Course"}
+                </button>
+            </div>
+
+            {error && (
+                <div className="error" role="alert">
+                    {error}
+                </div>
+            )}
+        </form>
     );
 }
 

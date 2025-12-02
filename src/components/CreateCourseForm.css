@@ -1,5 +1,5 @@
-/* Form container */
-form {
+/* Only styles the create course form */
+.create-course-form {
     max-width: 900px;
     margin: 0 auto;
     padding: var(--padding-medium);
@@ -7,7 +7,7 @@ form {
 }
 
 /* Tiptap editor styling */
-.tiptap {
+.create-course-form .tiptap {
     max-width: 100%;
     min-height: 200px;
     padding: 0.75rem;
@@ -16,17 +16,18 @@ form {
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
+    background-color: var(--white);
 }
 
-.tiptap p {
+.create-course-form .tiptap p {
     word-wrap: break-word;
     overflow-wrap: break-word;
     margin: 0.5rem 0;
 }
 
-.tiptap:focus {
-    outline: 2px solid var(--primary-color, #007bff);
-    border-color: var(--primary-color, #007bff);
+.create-course-form .tiptap:focus {
+    outline: 2px solid var(--highlight);
+    border-color: var(--highlight);
 }
 
 /* Form inputs */

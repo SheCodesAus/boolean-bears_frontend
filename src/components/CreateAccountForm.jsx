@@ -35,15 +35,15 @@ function CreateAccountForm() {
             username: credentials.username,
             email: credentials.emailaddress,
             password: credentials.password,
-        }; 
+        };
 
         try {
             await postCreateAccount(payload);
 
             // SUCCESS: Redirect to the the login page.
-            alert ("Account created successfully! Please log in.");
+            alert("Account created successfully! Please log in.");
             navigate("/login");
-            
+
         } catch (err) {
             // FAILURE: Set error state to display message to user
             console.error("Create Account Error:", err.message);
@@ -52,45 +52,48 @@ function CreateAccountForm() {
     };
 
     return (
-        <form className="create-account-form" onSubmit={handleSubmit}>
-            <h2>CREATE AN ACCOUNT</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <form className="form-grid" onSubmit={handleSubmit}>
 
-            <div className="field-group">
-                <label htmlFor="username">USER NAME</label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    placeholder="USER NAME"
+            {error && <p style={{ color: "red" }}>{error}</p>}
+
+            <div className="form-field">
+                <label htmlFor="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Username"
                     onChange={handleChange}
-                    value={credentials.username} 
-                    />
+                    value={credentials.username}
+                />
             </div>
 
-            <div className="field-group">
-                <label htmlFor="emailaddress">EMAIL ADDRESS</label>
-                <input 
-                    type="text" 
-                    id="emailaddress" 
-                    placeholder="EMAIL ADDRESS"
+            <div className="form-field">
+                <label htmlFor="emailaddress">Email</label>
+                <input
+                    type="text"
+                    id="emailaddress"
+                    placeholder="Email address"
                     onChange={handleChange}
-                    value={credentials.emailaddress} 
-                    />
-            </div>
-            <div className="field-group">
-                <label htmlFor="password">PASSWORD</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    placeholder="SET A PASSWORD"
-                    onChange={handleChange}
-                    value={credentials.password} 
-                    />
+                    value={credentials.emailaddress}
+                />
             </div>
 
-            <button type="submit">
-                CREATE ACCOUNT
-            </button>
+            <div className="form-field">
+                <label htmlFor="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter a password"
+                    onChange={handleChange}
+                    value={credentials.password}
+                />
+            </div>
+
+            <div className="form-actions">
+                <button type="submit" className="primary-btn">
+                    Sign Up
+                </button>
+            </div>
         </form>
     );
 }
