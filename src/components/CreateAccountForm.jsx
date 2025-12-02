@@ -53,43 +53,43 @@ function CreateAccountForm() {
 
     return (
         <form className="create-account-form" onSubmit={handleSubmit}>
-            <h2>CREATE AN ACCOUNT</h2>
+            <h2>Create An Account</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <div className="field-group">
-                <label htmlFor="username">USER NAME</label>
+                <label htmlFor="username">Username</label>
                 <input 
                     type="text" 
                     id="username" 
-                    placeholder="USER NAME"
+                    placeholder="Username"
                     onChange={handleChange}
                     value={credentials.username} 
                     />
             </div>
 
             <div className="field-group">
-                <label htmlFor="emailaddress">EMAIL ADDRESS</label>
+                <label htmlFor="emailaddress">Email</label>
                 <input 
                     type="text" 
                     id="emailaddress" 
-                    placeholder="EMAIL ADDRESS"
+                    placeholder="Email address"
                     onChange={handleChange}
                     value={credentials.emailaddress} 
                     />
             </div>
             <div className="field-group">
-                <label htmlFor="password">PASSWORD</label>
+                <label htmlFor="password">Password</label>
                 <input 
                     type="password" 
                     id="password" 
-                    placeholder="SET A PASSWORD"
+                    placeholder="Enter a password"
                     onChange={handleChange}
                     value={credentials.password} 
                     />
             </div>
 
             <button type="submit">
-                CREATE ACCOUNT
+                Sign Up
             </button>
         </form>
     );
