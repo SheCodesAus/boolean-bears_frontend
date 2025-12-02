@@ -1,6 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth.js";
 import "./NavBar.css";
+import logoUrl from "../../img/yarningcircles_logo_transparent.png";
 
 function NavBar() {
     const {auth, setAuth} = useAuth();
@@ -14,7 +15,9 @@ function NavBar() {
     return (
     <div>
         <nav id="navbar">
-        <Link to="/">Home</Link>
+        <Link to="/" className="logo-link" aria-label="Home">
+            <img src={logoUrl} alt="Home" className="navbar-logo" />
+        </Link>
 
         <Link to="/about">About</Link>
 
