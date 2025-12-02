@@ -1,7 +1,14 @@
 import CreateCourseForm from "../components/CreateCourseForm";
 
 function CreateCoursePage() {
-    return <CreateCourseForm />;
+    return (
+        <div className="form-page">
+            <div className="form-card">
+                <h1>Create a Course</h1>
+                <CreateCourseForm />
+            </div>
+        </div>
+    );
 }
 
 export default CreateCoursePage;
