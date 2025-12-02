@@ -202,7 +202,7 @@ function CreateCourseForm() {
     // Initialize Tiptap editor
     const editor = useEditor({
         extensions: [StarterKit],
-        content: '<p>Start writing your course content...</p>',
+        content: '<p>Use your preferred word processing program to write your course and then paste it here! Add headings, bold/italic, lists, quotes, and code—your formatting will be saved.</p>',
         onUpdate: ({ editor }) => {
             // Update course_content whenever editor changes
             const html = editor.getHTML();
@@ -308,19 +308,6 @@ function CreateCourseForm() {
                 <label htmlFor="course_content">Course Content</label>
                 <EditorContent editor={editor} className="tiptap" />
             </div>
-
-            <div className="form-field">
-                <label htmlFor="max_students">Maximum Students</label>
-                <input
-                    type="number"
-                    id="max_students"
-                    placeholder="Enter maximum number of students"
-                    onChange={handleClickChange}
-                    min="1"
-                    required
-                />
-            </div>
-
 
 
         <div className="file-uploader">

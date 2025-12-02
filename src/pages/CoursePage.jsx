@@ -196,7 +196,6 @@ function CoursePage() {
                 <h3><strong>by</strong> {course.owner}</h3>
 
                 {/* 5. Brief Description */}
-                <h3><strong>Brief Description</strong></h3>
                 <p>{course.brief_description}</p>
 
                 {/* 6. Course Content */}
