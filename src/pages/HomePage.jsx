@@ -8,6 +8,7 @@ function HomePage() {
     const { courses, isLoading, error } = useCourses();
     const { featured, isLoading: featuredLoading } = useFeaturedCourses(); //Custom hook fetches featured fundraisers from the API. Returns featured array and loading state
     const [query, setQuery] = useState("");
+    const [sortBy, setSortBy] = useState("relevance");
     const featuredTrackRef = useRef(null);
 
     // Helper function to get course ID
@@ -34,10 +35,46 @@ function HomePage() {
             const q = query.toLowerCase();
             return (
                 (c.title && c.title.toLowerCase().includes(q)) ||
-                (c.description && c.description.toLowerCase().includes(q))
+                (c.description && c.description.toLowerCase().includes(q)) ||
+                (c.category && String(c.category).toLowerCase().includes(q)) ||
+                (c.owner && String(c.owner).toLowerCase().includes(q))
             );
         });
     }, [courses, query, featured]);
+
+    // Sort the filtered courses based on selected sort option
+    const sortedCourses = useMemo(() => {
+        const list = [...(filteredCourses || [])];
+        const collator = new Intl.Collator(undefined, { sensitivity: "base" });
+
+        const likesOf = (x) => (x?.likes_count ?? x?.likes ?? 0);
+        const timeOf = (x) => {
+            const raw = x?.created_at ?? x?.createdAt ?? x?.date ?? null;
+            const parsed = raw ? Date.parse(raw) : NaN;
+            if (!Number.isNaN(parsed)) return parsed;
+            // Fallback: use numeric ID as a proxy for recency if available
+            const idNum = Number(getId(x) ?? 0);
+            return idNum;
+        };
+
+        switch (sortBy) {
+            case "title":
+                list.sort((a, b) => collator.compare(a?.title ?? "", b?.title ?? ""));
+                break;
+            case "likes":
+                list.sort((a, b) => likesOf(b) - likesOf(a));
+                break;
+            case "newest":
+                list.sort((a, b) => timeOf(b) - timeOf(a));
+                break;
+            case "relevance":
+            default:
+                // Keep API/default order
+                break;
+        }
+
+        return list;
+    }, [filteredCourses, sortBy]);
 
     const scrollFeatured = (dir) => {
         const el = featuredTrackRef.current;
@@ -87,8 +124,41 @@ function HomePage() {
             {/* All Courses Section */}
             <section className="all-courses-section">
                 <h2>All Courses</h2>
+                <div className="search-row">
+                    <input
+                        type="text"
+                        className="search-input"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search title, category, owner…"
+                        aria-label="Search courses"
+                    />
+                    {query && (
+                        <button
+                            type="button"
+                            className="primary-btn"
+                            onClick={() => setQuery("")}
+                            aria-label="Clear search"
+                        >
+                            Clear
+                        </button>
+                    )}
+                    <label htmlFor="sort" className="visually-hidden">Sort by</label>
+                    <select
+                        id="sort"
+                        className="sort-select"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        aria-label="Sort courses"
+                    >
+                        <option value="relevance">Sort: Relevance</option>
+                        <option value="title">Sort: Title (A–Z)</option>
+                        <option value="likes">Sort: Likes (High→Low)</option>
+                        <option value="newest">Sort: Newest</option>
+                    </select>
+                </div>
                 <div id="course-list">
-                    {filteredCourses.map((courseData, key) => {
+                    {sortedCourses.map((courseData, key) => {
                         return <CourseCard key={key} courseData={courseData} />;
                     })}
                 </div>
