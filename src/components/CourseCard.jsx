@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./CourseCard.css";
 import categoryImages from "../utils/category-images";
+import { categoryDisplay } from "../utils/category-display";
 
 function CourseCard(props) {
     const { courseData } = props;
@@ -11,9 +12,9 @@ function CourseCard(props) {
         <div className="course-card">
             <Link to={courseLink}>
                 <h2>{courseData.title}</h2>
-                <p>Category: {courseData.category}</p>
+                <p>Category: {categoryDisplay[courseData.category] || courseData.category}</p>
                 <p>By: {courseData.owner}</p>
-                <p>{courseData.course_content.substring(0, 100)}...</p>
+                <p>{courseData.brief_description.substring(0, 150)}...</p>
                 <img 
                     src={categoryImages[courseData.category]} 
                     alt={courseData.category} 
@@ -21,7 +22,6 @@ function CourseCard(props) {
                 />
                 <span className="likes">❤️ {likesCount}</span>
 
-            {/* Add the Button Here */}
             <button className="btn-learn-more">
                 Learn More
             </button>
