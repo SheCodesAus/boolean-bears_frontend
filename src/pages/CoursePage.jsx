@@ -156,6 +156,12 @@ function CoursePage() {
         return '📁';
     };
 
+    // Optional: decode if your API returns &lt;...&gt; entities
+        const decodeHTML = (html) => {
+        const el = document.createElement('textarea');
+        el.innerHTML = html ?? '';
+        return el.value;
+        };
 
     return (
     <div className="course-page">
@@ -196,7 +202,10 @@ function CoursePage() {
                 {/* 6. Course Content */}
                 <div>
                 <h3><strong>Course Content</strong></h3>
-                <p>{course.course_content}</p>
+                <div
+                    className="rendered-content"
+                    dangerouslySetInnerHTML={{ __html: decodeHTML(course.course_content) }}
+                />
                 </div>
 
                 {/* 8. Course Materials */}
