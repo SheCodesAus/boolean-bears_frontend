@@ -43,7 +43,6 @@ function LoginForm() {
 
     return (
         <form className="form-grid" onSubmit={handleSubmit}>
-            <h2>Please enter your login credentials below.</h2>
 
             <div className="form-field">
                 <label htmlFor="username">Username</label>
