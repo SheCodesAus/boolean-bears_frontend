@@ -1,13 +1,14 @@
 import useCourses from "../hooks/use-courses";
 import CourseCard from "../components/CourseCard";
 import useFeaturedCourses from "../hooks/use-featured-courses";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import "./HomePage.css";
 
 function HomePage() {
     const { courses, isLoading, error } = useCourses();
     const { featured, isLoading: featuredLoading } = useFeaturedCourses(); //Custom hook fetches featured fundraisers from the API. Returns featured array and loading state
     const [query, setQuery] = useState("");
+    const featuredTrackRef = useRef(null);
 
     // Helper function to get course ID
     const getId = (item) => {
@@ -38,6 +39,13 @@ function HomePage() {
         });
     }, [courses, query, featured]);
 
+    const scrollFeatured = (dir) => {
+        const el = featuredTrackRef.current;
+        if (!el) return;
+        const amount = Math.max(240, Math.floor(el.clientWidth * 0.9));
+        el.scrollBy({ left: dir * amount, behavior: "smooth" });
+    };
+
         if (isLoading) {
             return (<p>loading...</p>)
         }
@@ -52,10 +60,26 @@ function HomePage() {
             {featured && featured.length > 0 && (
                 <section id="featured-courses" className="featured-section">
                     <h2>Featured Courses</h2>
-                    <div className="featured-list">
-                        {featured.map((course) => (
-                            <CourseCard key={course.id} courseData={course} />
-                        ))}
+                    <div className="carousel">
+                        <button
+                            className="carousel-btn prev"
+                            aria-label="Previous featured"
+                            onClick={() => scrollFeatured(-1)}
+                        >
+                            ‹
+                        </button>
+                        <div className="featured-list carousel-track" ref={featuredTrackRef}>
+                            {featured.map((course) => (
+                                <CourseCard key={course.id} courseData={course} />
+                            ))}
+                        </div>
+                        <button
+                            className="carousel-btn next"
+                            aria-label="Next featured"
+                            onClick={() => scrollFeatured(1)}
+                        >
+                            ›
+                        </button>
                     </div>
                 </section>
             )}

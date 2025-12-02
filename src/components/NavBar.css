@@ -27,6 +27,17 @@
     margin-right: auto;
 }
 
+/* Logo link should not look like a pill button */
+.logo-link {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+.navbar-logo {
+    display: block;
+    height: 36px;
+}
+
 /* Primary call-to-action: Create A Course */
 #navbar a[href="/createcourse"] {
     background-color: var(--action);
@@ -40,6 +51,11 @@
     background-color: var(--brand);
     /* coral */
     color: var(--white);
+}
+
+/* Prevent hover background on the logo */
+.logo-link:hover {
+    background: transparent;
 }
 
 /* "Hello, User" label */
