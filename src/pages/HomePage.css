@@ -17,6 +17,41 @@
   margin: 0 0 var(--padding-medium);
 }
 
+/* Search bar */
+.search-row {
+  margin: 8px 0 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 300px; /* match card min width */
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d7de;
+  font-family: var(--font-sourcesans);
+}
+
+.sort-select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d7de;
+  font-family: var(--font-sourcesans);
+  margin-left: auto; /* push to right side */
+}
+
+/* Utility for accessible, visually hidden labels */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
 /* Featured Courses (page-specific) */
 .featured-section {
   margin: var(--padding-xl) 0;
