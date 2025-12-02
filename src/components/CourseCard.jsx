@@ -10,10 +10,9 @@ function CourseCard(props) {
 
     return (
         <div className="course-card">
-            <Link to={courseLink}>
                 <h2>{courseData.title}</h2>
-                <p>Category: {categoryDisplay[courseData.category] || courseData.category}</p>
-                <p>By: {courseData.owner}</p>
+                <p>{categoryDisplay[courseData.category] || courseData.category}</p>
+                <p>by {courseData.owner}</p>
                 <p>{courseData.brief_description.substring(0, 150)}...</p>
                 <img 
                     src={categoryImages[courseData.category]} 
@@ -22,6 +21,7 @@ function CourseCard(props) {
                 />
                 <span className="likes">❤️ {likesCount}</span>
 
+            <Link to={courseLink}>
             <button className="btn-learn-more">
                 Learn More
             </button>

@@ -15,7 +15,6 @@ function CreateCourseForm() {
         brief_description: "",
         course_content: "",
         category: "",
-        max_students: "",
         image: null,
     });
 
@@ -94,11 +93,12 @@ function CreateCourseForm() {
             </div>
 
             <div className="form-field">
-                <label htmlFor="brief_description">Description of course</label>
+                <label htmlFor="brief_description">Brief description of course</label>
                 <input
                     type="text"
                     id="brief_description"
-                    placeholder="Enter brief description of course, max 500 char"
+                    placeholder="Enter brief description of course, max 250 characters"
+                    maxLength={250}
                     onChange={handleClickChange}
                     required
                 />
@@ -117,7 +117,7 @@ function CreateCourseForm() {
                     <option value="arts and crafts">Arts and Crafts</option>
                     <option value="reading and writing">Reading and Writing</option>
                     <option value="music and musical instruments">Music and Musical Instruments</option>
-                    <option value="language learning">Language Learning</option>
+                    <option value="language learning">Foreign Languages</option>
                     <option value="health and wellness">Health and Wellness</option>
                     <option value="business and finance">Business and Finance</option>
                     <option value="personal development">Personal Development</option>
@@ -128,18 +128,6 @@ function CreateCourseForm() {
             <div className="form-field">
                 <label htmlFor="course_content">Course Content</label>
                 <EditorContent editor={editor} className="tiptap" />
-            </div>
-
-            <div className="form-field">
-                <label htmlFor="max_students">Maximum Students</label>
-                <input
-                    type="number"
-                    id="max_students"
-                    placeholder="Enter maximum number of students"
-                    onChange={handleClickChange}
-                    min="1"
-                    required
-                />
             </div>
 
             <div className="form-actions">

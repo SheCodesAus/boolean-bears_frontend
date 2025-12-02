@@ -53,7 +53,7 @@ function CreateAccountForm() {
 
     return (
         <form className="form-grid" onSubmit={handleSubmit}>
-            <h2>Please create your account below by entering your details.</h2>
+
             {error && <p style={{ color: "red" }}>{error}</p>}
 
             <div className="form-field">

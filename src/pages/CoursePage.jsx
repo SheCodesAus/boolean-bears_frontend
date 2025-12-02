@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/use-auth";
 import { ThumbsUp } from "lucide-react";
+import { categoryDisplay } from "../utils/category-display";
 
 // API Imports
 import postLike from "../api/post-likecourse";
@@ -156,19 +157,16 @@ function CoursePage() {
                 <h1 className="course-title">{course.title}</h1>
                 
                 {/* 3. Category */}
-                <h3><strong>Category:</strong> {course.category}</h3>
+                <h2>{categoryDisplay[course.category] || course.category}</h2>
                 
                 {/* 4. By Owner */}
-                <h3><strong>By:</strong> {course.owner}</h3>
-                
-                {/* 5. Maximum Students */}
-                <h3><strong>Maximum Students:</strong> {course.max_students}</h3>
+                <h3><strong>by</strong> {course.owner}</h3>
 
-                {/* 6. Brief Description */}
+                {/* 5. Brief Description */}
                 <h3><strong>Brief Description</strong></h3>
                 <p>{course.brief_description}</p>
 
-                {/* 7. Course Content */}
+                {/* 6. Course Content */}
                 <div>
                     <h3><strong>Course Content</strong> </h3> 
                     <div
@@ -176,7 +174,7 @@ function CoursePage() {
                     />
                 </div>
 
-                {/* 8. Update and Delete buttons (only visible to owner) */}
+                {/* 7. Update and Delete buttons (only visible to owner) */}
                 {isOwner && (
                     <div className="course-actions">
                         <button 
