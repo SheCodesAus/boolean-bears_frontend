@@ -15,6 +15,7 @@ import useComments from "../hooks/use-comment";
 import CommentForm from "../components/CommentForm";
 import CommentList from "../components/CommentList";
 import categoryImages from "../utils/category-images";
+import { handleFileUpload } from "../api/post-uploadandregister";
 
 function CoursePage() {
     const navigate = useNavigate();
@@ -87,7 +88,17 @@ function CoursePage() {
     if (!course) {
         return (<p>Course not found</p>)
     }
-
+    const handleFileInputChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                await handleFileUpload(file, id, auth.token);
+                window.location.reload(); // Refresh course data
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    };
     // Check if logged-in user is the owner
     const isOwner = auth?.username === course.owner;
 
@@ -128,6 +139,22 @@ function CoursePage() {
     const handleCommentAdded = (newComment) => {
         addComment(newComment);
     };
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const getFileTypeIcon = (type) => {
+        if (!type || typeof type !== 'string') return '📁'; 
+        if (type.startsWith('image/')) return '🖼️';
+        if (type.startsWith('video/')) return '🎥';
+        if (type === 'application/pdf') return '📄';
+        return '📁';
+    };
+
 
     return (
     <div className="course-page">
@@ -170,13 +197,23 @@ function CoursePage() {
 
                 {/* 7. Course Content */}
                 <div>
-                    <h3><strong>Course Content</strong> </h3> 
-                    <div
-                    dangerouslySetInnerHTML={{ __html: course.course_content}}
-                    />
+                <h3><strong>Course Content</strong></h3>
+                <p>{course.course_content}</p>
                 </div>
 
-                {/* 8. Update and Delete buttons (only visible to owner) */}
+                {/* 8. Course Materials */}
+                <div className="course-materials">
+                    <h3><strong>Course Materials</strong></h3>
+                    {course.image ? ( 
+                        <a href ={course.image} target="_blank" rel="noopener noreferrer">
+                            View Course Material
+                        </a>
+
+                    ) : (
+                        <p>No files uploaded for this course.</p>
+                    )} </div>
+
+                {/* To display uploaded files ends */}
                 {isOwner && (
                     <div className="course-actions">
                         <button 
