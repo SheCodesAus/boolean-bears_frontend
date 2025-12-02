@@ -1,11 +1,20 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import useCourse from "../hooks/use-course";
-import postLike from "../api/post-likecourse";
-import categoryImages from "../utils/category-images";
 import { useAuth } from "../hooks/use-auth";
-import deleteCourse from "../api/delete-course";
 import { ThumbsUp } from "lucide-react";
+
+// API Imports
+import postLike from "../api/post-likecourse";
+import deleteCourse from "../api/delete-course";
+
+// Hook Imports
+import useCourse from "../hooks/use-course";
+import useComments from "../hooks/use-comment";
+
+// Components Imports
+import CommentForm from "../components/CommentForm";
+import CommentList from "../components/CommentList";
+import categoryImages from "../utils/category-images";
 
 function CoursePage() {
     const navigate = useNavigate();
@@ -16,8 +25,16 @@ function CoursePage() {
     const [liking, setLiking] = useState(false);
     const { auth } = useAuth();
 
-    // useCourse returns three pieces of info, so we need to grab them all here
+    // Fetch Course Data
     const { course, isLoading, error } = useCourse(id);
+
+    // Fetch comments data
+    const {
+        comments,
+        isLoading: commentsLoading,
+        error: commentsError,
+        addComment
+    } = useComments(id);
     
     /////// Likes /////////
     useEffect(() => {
@@ -107,6 +124,11 @@ function CoursePage() {
         }
     };
 
+    // Handler for when a new comment is added
+    const handleCommentAdded = (newComment) => {
+        addComment(newComment);
+    };
+
     return (
     <div className="course-page">
         {/* 1. Course Image */}
@@ -154,6 +176,7 @@ function CoursePage() {
                     />
                 </div>
 
+                {/* 8. Update and Delete buttons (only visible to owner) */}
                 {isOwner && (
                     <div className="course-actions">
                         <button 
@@ -170,6 +193,22 @@ function CoursePage() {
                         </button>
                     </div>
                 )}
+
+               {/* 9. Comments Section  */}
+                <div className="comments-section">
+                    <hr />
+                    {/* Comment form */}
+                    <CommentForm
+                        courseId={id}
+                        onCommentAdded={handleCommentAdded}
+                    />
+                    {/* Comment List */}
+                    <CommentList
+                        comments={comments}
+                        isLoading={commentsLoading}
+                        error={commentsError}
+                    />
+                </div>
             </div>
         </div>
     );
