@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/use-auth.js";
 
 function LoginForm() {
     const navigate = useNavigate();
-    const {auth, setAuth} = useAuth();
+    const { auth, setAuth } = useAuth();
 
     const [credentials, setCredentials] = useState({
         username: "",
@@ -33,7 +33,7 @@ function LoginForm() {
                 window.localStorage.setItem("token", response.token);
                 window.localStorage.setItem("username", credentials.username);
                 setAuth({
-                    token:response.token,
+                    token: response.token,
                     username: credentials.username,
                 });
                 navigate("/");
@@ -42,33 +42,41 @@ function LoginForm() {
     };
 
     return (
-        <form>
-            <h2>LOG IN</h2>
-            <div>
+        <form className="form-grid" onSubmit={handleSubmit}>
+            <h2>Please enter your login credentials below.</h2>
+
+            <div className="form-field">
                 <label htmlFor="username">Username</label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    placeholder="Username" 
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Username"
                     onChange={handleChange}
+                    value={credentials.username}
                 />
             </div>
-            <div>
+
+            <div className="form-field">
                 <label htmlFor="password">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    placeholder="Password" 
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
                     onChange={handleChange}
+                    value={credentials.password}
                 />
             </div>
-            <button type="submit" onClick={handleSubmit}>
-                Log In
-            </button>
-            <div className="signup-prompt">
-                Don't have an account yet?
-                <br />
-                Create one <Link to="/createaccount">here</Link> to start learning!
+
+            <div className="form-actions">
+                <button type="submit" className="primary-btn">
+                    Log In
+                </button>
+
+                <p className="form-helper signup-prompt">
+                    Don&apos;t have an account yet?
+                    <br />
+                    Create one <Link to="/createaccount">here</Link> to start learning!
+                </p>
             </div>
         </form>
     );
