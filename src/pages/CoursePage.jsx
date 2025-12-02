@@ -197,49 +197,22 @@ function CoursePage() {
 
                 {/* 7. Course Content */}
                 <div>
-                    <h3><strong>Course Content</strong> </h3> 
-                    <div
-                    dangerouslySetInnerHTML={{ __html: course.course_content}}
-                    />
+                <h3><strong>Course Content</strong></h3>
+                <p>{course.course_content}</p>
                 </div>
 
                 {/* 8. Course Materials */}
-                <div >
-                    <strong>Files</strong>
-                    {console.log('uploaded_files:', course.uploaded_files)}
+                <div className="course-materials">
+                    <h3><strong>Course Materials</strong></h3>
+                    {course.image ? ( 
+                        <a href ={course.image} target="_blank" rel="noopener noreferrer">
+                            View Course Material
+                        </a>
 
-                {course.uploaded_files?.length > 0 && (
-                    <div className="uploaded-files">
-                        <h3>Recently Uploaded Files</h3>
-                        <div className="files-list">
-                            {course.uploaded_files.map((file, index) => {
-                                const uploadedAt = file.uploaded_at || file.uploadedAt;
-                                const publicUrl = file.public_url || file.publicUrl;
-                            <input type="file" onChange={handleFileInputChange} />
+                    ) : (
+                        <p>No files uploaded for this course.</p>
+                    )} </div>
 
-                                return (
-                                    <div key={index} className="uploaded-file-item">
-                                        <span className="file-icon">{getFileTypeIcon(file.type)}</span>
-                                        <div className="file-info">
-                                            <div className="file-name">{file.name}</div>
-                                            <div className="file-meta">
-                                                {formatFileSize(file.size)} • Uploaded {uploadedAt ? formatDate(uploadedAt) : '—'}
-                                            </div>
-                                            {publicUrl && (
-                                                <div className="file-url">
-                                                    <a href={publicUrl} target="_blank" rel="noopener noreferrer">
-                                                        🌐 View Public Link
-                                                    </a>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}               
-                </div>
                 {/* To display uploaded files ends */}
                 {isOwner && (
                     <div className="course-actions">

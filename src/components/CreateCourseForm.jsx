@@ -242,9 +242,7 @@ function CreateCourseForm() {
         formData.append("category", courseform.category);
         formData.append("max_students", courseform.max_students);
         formData.append("is_open", true);
-        if (courseform.course_files) {
-            formData.append("course_files", courseform.course_files);
-        }
+        formData.append("image",uploadedFiles.length > 0 ? uploadedFiles[0].publicUrl : undefined); // use first uploaded file as image
         setLoading(true);
         try {
             const created = await postCreateCourse(formData, auth?.token);
@@ -321,6 +319,100 @@ function CreateCourseForm() {
                     min="1"
                     required
                 />
+            </div>
+
+
+
+        <div className="file-uploader">
+            <div className="upload-section">
+                <h2>Upload Files to S3</h2>
+                <p className="upload-description">
+                Upload images, videos, and PDFs to S3 storage. 
+                <br />Supported: JPEG/PNG (15MB max), MP4/MOV (500MB max), PDF (50MB max)
+                </p>
+
+                <div className="file-input-container">
+                <input
+                    id="file-input"
+                    type="file"
+                    accept="image/jpeg,image/png,video/mp4,video/quicktime,application/pdf"
+                    onChange={handleFileSelect}
+                    disabled={isUploading}
+                    className="file-input"
+                />
+                <label htmlFor="file-input" className={`file-input-label ${isUploading ? 'disabled' : ''}`}>
+                    Choose File
+                </label>
+                </div>
+
+                {selectedFile && (
+                <div className="selected-file">
+                    <div className="file-info">
+                    <span className="file-icon">{getFileTypeIcon(selectedFile.type)}</span>
+                    <div className="file-details">
+                        <strong>{selectedFile.name}</strong>
+                        <div className="file-meta">
+                        {selectedFile.type} • {formatFileSize(selectedFile.size)}
+                        </div>
+                    </div>
+                    </div>
+                    
+                    <button
+                    type="button"
+                    onClick={handleUpload}
+                    disabled={isUploading}
+                    className={`upload-button ${isUploading ? 'uploading' : ''}`}
+                    >
+                    {isUploading ? 'Uploading...' : 'Upload File'}
+                    </button>
+                </div>
+                )}
+
+                {uploadProgress > 0 && (
+                <div className="progress-container">
+                    <div className="progress-bar">
+                    <div 
+                        className="progress-fill" 
+                        style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                    </div>
+                    <span className="progress-text">{uploadProgress}%</span>
+                </div>
+                )}
+
+                {uploadStatus && (
+                <div className={`status-message ${uploadStatus.startsWith('Error') || uploadStatus.includes('failed') ? 'error' : uploadStatus.includes('success') ? 'success' : 'info'}`}>
+                    {uploadStatus}
+                </div>
+                )}
+            </div>
+
+            {uploadedFiles.length > 0 && (
+                <div className="uploaded-files">
+                <h3>Recently Uploaded Files</h3>
+                <div className="files-list">
+                    {uploadedFiles.map((file, index) => (
+                    <div key={index} className="uploaded-file-item">
+                        <span className="file-icon">{getFileTypeIcon(file.type)}</span>
+                        <div className="file-info">
+                        <div className="file-name">{file.name}</div>
+                        <div className="file-meta">
+                            {formatFileSize(file.size)} • Uploaded {new Date(file.uploadedAt).toLocaleString()}
+                        </div>
+                        {/* <div className="file-key">S3 Key: {file.fileKey}</div> */}
+                        {file.publicUrl && (
+                            <div className="file-url">
+                            <a href={file.publicUrl} target="_blank" rel="noopener noreferrer" className="public-link">
+                                🌐 View Public Link
+                            </a>
+                            </div>
+                        )}
+                        </div>
+                    </div>
+                    ))}
+                </div>
+                </div>
+            )}
             </div>
 
             <div className="form-actions">

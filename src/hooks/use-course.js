@@ -11,6 +11,7 @@ export default function useCourse(courseId) {
     // Here we pass the courseId to the getCourse function.
     getCourse(courseId)
         .then((course) => {
+            console.log("Fetched course:", course);
             setCourse(course);
             setIsLoading(false);
         })
