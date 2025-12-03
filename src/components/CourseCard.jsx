@@ -19,6 +19,12 @@ function CourseCard(props) {
     const enrolledCount = getCount(courseId);
     const youAreEnrolled = isEnrolled(courseId, auth?.username);
     const courseIsFull = isFull(courseId, maxStudents);
+    // Enrollment end: accept ISO strings or date-like strings
+    const enrollEndISO = courseData?.enrollment_end ?? courseData?.enrollmentEnd ?? null;
+    const enrollEndDate = enrollEndISO ? new Date(enrollEndISO) : null;
+    const enrollClosed = enrollEndDate && !Number.isNaN(enrollEndDate.getTime())
+        ? (Date.now() > enrollEndDate.getTime())
+        : false;
 
     // Create the click handler
     const handleCardClick = () => {
@@ -28,26 +34,32 @@ function CourseCard(props) {
             return;
         }
 
-        // If course is full and user is not enrolled, block access entirely
-        if (courseIsFull && !youAreEnrolled) {
+        // If course is full or enrollment period ended and user is not enrolled, block access entirely
+        if ((courseIsFull || enrollClosed) && !youAreEnrolled) {
             alert("Sorry, this course is full.");
             return; // Do not navigate to the course page
         }
 
-        const confirmJoin = window.confirm("Do you want to join this course now?");
-        if (confirmJoin) {
-            if (youAreEnrolled) {
-                alert("You're already enrolled. Taking you to the course page.");
-            } else {
+            const confirmJoin = window.confirm("Do you want to join this course now?");
+            if (confirmJoin) {
                 const res = enroll(courseId, auth?.username, maxStudents);
                 if (!res.ok) {
-                    if (res.reason === "full") alert("Sorry, this course is full.");
-                    else if (res.reason === "already") alert("You're already enrolled.");
-                } else {
-                    alert("Enrollment confirmed! Redirecting to course page.");
+                    if (res.reason === "full") {
+                        alert("Sorry, this course is full.");
+                        return;
+                    } else if (res.reason === "already") {
+                        navigate(`/course/${courseId}`);
+                        return;
+                    }
+                    return;
                 }
+                navigate(`/course/${courseId}`);
+                return;
+            } else {
+                // User cancelled enrollment: take them back to Home
+                navigate("/");
+                return;
             }
-        }
 
         navigate(`/course/${courseId}`);
     };
@@ -69,38 +81,91 @@ function CourseCard(props) {
         return "cat-default";
     };
 
+    // Derived display helpers
+    const durationHours = (() => {
+        const durRaw = courseData?.duration_in_hours ?? courseData?.duration;
+        const dur = Number(durRaw);
+        return Number.isFinite(dur) && dur > 0 ? dur : null;
+    })();
+    const enrolByText = enrollEndDate && !Number.isNaN(enrollEndDate.getTime())
+        ? enrollEndDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : null;
+    const spotsLeft = (typeof maxStudents === 'number' && maxStudents > 0)
+        ? Math.max(0, maxStudents - enrolledCount)
+        : null;
+
     return (
         <div className="course-card">
+            {/* TOP ROW — Difficulty + Category */}
+            <div className="top-row">
+                {courseData?.difficulty_level && (
+                    <span className={`chip diff ${courseData.difficulty_level}`}>
+                        {courseData.difficulty_level.charAt(0).toUpperCase() + courseData.difficulty_level.slice(1)}
+                    </span>
+                )}
+                <span className={`chip category ${catClass(courseData.category)}`}>
+                    {categoryDisplay[courseData.category] || courseData.category}
+                </span>
+            </div>
+
+            {/* IMAGE */}
             <img
                 src={categoryImages[courseData.category]}
                 alt={courseData.category}
                 className="course-image"
             />
+
+            {/* TITLE + AUTHOR */}
             <h2 className="card-title">{courseData.title}</h2>
-            <div className="status-row">
-                {youAreEnrolled && (
-                    <span className="status-badge enrolled">Enrolled</span>
+            <p className="owner">by {courseData.owner}</p>
+
+            {/* METADATA ROW (duration + enrolment end + max students) */}
+            <div className="meta-row">
+                {durationHours && (
+                    <span className="meta-item" aria-label="Duration">⏱️ {durationHours}h</span>
                 )}
-                {courseIsFull && (
-                    <span className="status-badge full">Full</span>
+                {enrolByText && (
+                    <span className="meta-item" aria-label="Enrol by">📅 Enrol by {enrolByText}</span>
                 )}
-                {maxStudents && (
-                    <span className="status-badge capacity">{enrolledCount}/{maxStudents}</span>
+                {typeof maxStudents === 'number' && maxStudents > 0 && (
+                    <span className="meta-item" aria-label="Max students">👤 Max {maxStudents}</span>
                 )}
             </div>
-            <p className="category-row">
-                <span className={`category-badge ${catClass(courseData.category)}`}>
-                    {categoryDisplay[courseData.category] || courseData.category}
-                </span>
-            </p>
-            <p className="owner">by {courseData.owner}</p>
+
+            {/* BRIEF DESCRIPTION */}
             <p className="brief">{courseData.brief_description ? `${courseData.brief_description.substring(0, 150)}...` : ""}</p>
 
-            <div className="card-footer">
-                <span className="likes">❤️ {likesCount}</span>
-                <button className="btn-learn-more" onClick={handleCardClick}>
-                    Learn More
+            {/* SOCIAL PROOF (ratings + likes) */}
+            <div className="social-row">
+                <span className="rating" aria-label="Rating">
+                    {typeof courseData?.average_rating === 'number' ? (
+                        <>⭐ {courseData.average_rating.toFixed(1)}</>
+                    ) : (
+                        <>⭐ —</>
+                    )}
+                    {typeof courseData?.comments_count === 'number' && (
+                        <span>({courseData.comments_count})</span>
+                    )}
+                </span>
+                <span className="likes" aria-label="Likes">❤️ {likesCount}</span>
+            </div>
+
+            {/* CTA — Enrol button with optional hint */}
+            <div className="cta-row">
+                <button
+                    className="btn-learn-more"
+                    onClick={handleCardClick}
+                    disabled={(courseIsFull || enrollClosed) && !youAreEnrolled}
+                    title={(courseIsFull || enrollClosed) && !youAreEnrolled ? (enrollClosed ? 'Enrolment closed' : 'Course is full') : 'Enrol now'}
+                >
+                    Enrol Now
                 </button>
+                {spotsLeft !== null && spotsLeft > 0 && !enrollClosed && (
+                    <div className="cta-hint">{spotsLeft} spots left</div>
+                )}
+                {enrollClosed && !youAreEnrolled && (
+                    <div className="cta-hint">Enrolment closed</div>
+                )}
             </div>
         </div>
     );
