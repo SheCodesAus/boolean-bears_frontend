@@ -19,6 +19,12 @@ function CreateCourseForm() {
         course_content: "",
         category: "",
         image: null,
+        difficulty_level: "beginner",
+        duration_in_hours: "",
+        learning_objectives: "",
+        enrollment_end: "",
+        status: "published",
+        max_students: "",
     });
 
     // This code is for file upload handling (using AWS S3 presigned URLs)
@@ -239,9 +245,25 @@ function CreateCourseForm() {
         formData.append("brief_description", courseform.brief_description);
         formData.append("course_content", courseform.course_content);
         formData.append("category", courseform.category);
-        formData.append("max_students", courseform.max_students);
+        if (courseform.max_students) formData.append("max_students", Number(courseform.max_students));
         formData.append("is_open", true);
-        formData.append("image",uploadedFiles.length > 0 ? uploadedFiles[0].publicUrl : undefined); // use first uploaded file as image
+        if (uploadedFiles.length > 0 && uploadedFiles[0].publicUrl) {
+            formData.append("image", uploadedFiles[0].publicUrl);
+        }
+        // Extra fields
+        formData.append("difficulty_level", courseform.difficulty_level);
+        if (courseform.duration_in_hours) {
+            formData.append("duration_in_hours", Number(courseform.duration_in_hours));
+        }
+        if (courseform.learning_objectives) {
+            formData.append("learning_objectives", courseform.learning_objectives);
+        }
+        if (courseform.enrollment_end) {
+            const dt = new Date(courseform.enrollment_end);
+            const value = Number.isNaN(dt.getTime()) ? courseform.enrollment_end : dt.toISOString();
+            formData.append("enrollment_end", value);
+        }
+        formData.append("status", courseform.status);
         setLoading(true);
         try {
             const created = await postCreateCourse(formData, auth?.token);
@@ -305,8 +327,68 @@ function CreateCourseForm() {
             </div>
 
             <div className="form-field">
+                <label htmlFor="difficulty_level">Difficulty Level</label>
+                <select id="difficulty_level" onChange={handleClickChange} value={courseform.difficulty_level}>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+
+            <div className="form-field">
                 <label htmlFor="course_content">Course Content</label>
                 <EditorContent editor={editor} className="tiptap" />
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="learning_objectives">Learning Objectives</label>
+                <textarea
+                    id="learning_objectives"
+                    placeholder="List key objectives for learners"
+                    onChange={handleClickChange}
+                    rows={4}
+                />
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="max_students">Maximum Students</label>
+                <input
+                    type="number"
+                    id="max_students"
+                    placeholder="Enter maximum number of students"
+                    onChange={handleClickChange}
+                    min="1"
+                    required
+                />
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="duration_in_hours">Duration (hours)</label>
+                <input
+                    type="number"
+                    id="duration_in_hours"
+                    placeholder="e.g., 12"
+                    onChange={handleClickChange}
+                    min="1"
+                />
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="enrollment_end">Enrollment End</label>
+                <input
+                    type="datetime-local"
+                    id="enrollment_end"
+                    onChange={handleClickChange}
+                />
+            </div>
+
+            <div className="form-field">
+                <label htmlFor="status">Status</label>
+                <select id="status" onChange={handleClickChange} value={courseform.status}>
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                    <option value="archived">Archived</option>
+                </select>
             </div>
 
 
@@ -360,7 +442,6 @@ function CreateCourseForm() {
                     <div className="progress-bar">
                     <div 
                         className="progress-fill" 
-                        style={{ width: `${uploadProgress}%` }}
                     ></div>
                     </div>
                     <span className="progress-text">{uploadProgress}%</span>

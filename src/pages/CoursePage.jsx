@@ -17,6 +17,9 @@ import CommentForm from "../components/CommentForm";
 import CommentList from "../components/CommentList";
 import categoryImages from "../utils/category-images";
 import { handleFileUpload } from "../api/post-uploadandregister";
+import postRating from "../api/post-rating";
+import getRating from "../api/get-rating";
+import { isEnrolled as isEnrolledUtil } from "../utils/enrollment";
 
 function CoursePage() {
     const navigate = useNavigate();
@@ -77,18 +80,6 @@ function CoursePage() {
         }
         };
 //     // likes ended///////
-    
-    if (isLoading) {
-        return (<p>loading...</p>)
-    }
-
-    if (error) {
-        return (<p>{error.message}</p>)
-    }
-
-    if (!course) {
-        return (<p>Course not found</p>)
-    }
     const handleFileInputChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -100,8 +91,8 @@ function CoursePage() {
             }
         }
     };
-    // Check if logged-in user is the owner
-    const isOwner = auth?.username === course.owner;
+    // Check if logged-in user is the owner (guard course)
+    const isOwner = !!course && auth?.username === (course?.owner ?? "");
 
 
     const formatDate = (iso) => {
@@ -140,6 +131,54 @@ function CoursePage() {
     const handleCommentAdded = (newComment) => {
         addComment(newComment);
     };
+
+    // Enrollment check (frontend-only): use shared utils/enrollment to ensure consistency
+    const isEnrolled = isEnrolledUtil(id, auth?.username);
+
+    // User rating state - initialize from backend if available
+    const [userRating, setUserRating] = useState(0);
+    useEffect(() => {
+        const fetchUserRating = async () => {
+            try {
+                const data = await getRating(id, auth?.token);
+                // If backend returns the user's rating object directly
+                if (data && typeof data === 'object' && !Array.isArray(data) && typeof data.score === 'number') {
+                    setUserRating(data.score);
+                    return;
+                }
+                // If backend returns a list of ratings, try to find current user's
+                if (Array.isArray(data)) {
+                    const mine = data.find((r) => String(r?.user) === String(auth?.username));
+                    if (mine && typeof mine.score === 'number') {
+                        setUserRating(mine.score);
+                        return;
+                    }
+                }
+                // Fallback to localStorage if not available
+                const key = `rating_course_${id}_${auth?.username || 'anonymous'}`;
+                const v = localStorage.getItem(key);
+                if (v) setUserRating(Number(v));
+            } catch {
+                // fallback only
+                const key = `rating_course_${id}_${auth?.username || 'anonymous'}`;
+                const v = localStorage.getItem(key);
+                if (v) setUserRating(Number(v));
+            }
+        };
+        if (id) fetchUserRating();
+    }, [id, auth?.token, auth?.username]);
+
+    const saveUserRating = async (r) => {
+        setUserRating(r);
+        try {
+            const res = await postRating(id, r, auth?.token);
+            // Persist locally as a fallback
+            const key = `rating_course_${id}_${auth?.username || 'anonymous'}`;
+            localStorage.setItem(key, String(r));
+        } catch (e) {
+            alert(e.message || "Could not submit rating.");
+        }
+    };
     const formatFileSize = (bytes) => {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -162,6 +201,27 @@ function CoursePage() {
         el.innerHTML = html ?? '';
         return el.value;
         };
+
+    
+
+    const averageRating = (() => {
+        const v = course?.average_rating ?? course?.rating;
+        return typeof v === 'number' ? v : null;
+    })();
+    const commentsCount = Array.isArray(comments) ? comments.length : (course?.comments_count ?? null);
+
+    // Early returns must come after all hooks
+    if (isLoading) {
+        return (<p>loading...</p>)
+    }
+
+    if (error) {
+        return (<p>{error.message}</p>)
+    }
+
+    if (!course) {
+        return (<p>Course not found</p>)
+    }
 
     return (
     <div className="course-page">
@@ -187,7 +247,9 @@ function CoursePage() {
         </div>
             <div className="course-content">
                 {/* 2. Course Title */}
-                <h1 className="course-title">{course.title}</h1>
+                <h1 className="course-title">
+                    {course.title}
+                </h1>
                 
                 {/* 3. Category */}
                 <h2>{categoryDisplay[course.category] || course.category}</h2>
@@ -195,8 +257,22 @@ function CoursePage() {
                 {/* 4. By Owner */}
                 <h3><strong>by</strong> {course.owner}</h3>
 
-                {/* 5. Brief Description */}
-                <p>{course.brief_description}</p>
+                {/* 5. Brief Description + Rating summary */}
+                <p>
+                    {course.brief_description}
+                </p>
+                {(averageRating != null || typeof commentsCount === 'number') && (
+                    <div >
+                        <span aria-label="Average rating">
+                            ⭐ {averageRating != null ? averageRating.toFixed(1) : '—'}
+                        </span>
+                        {typeof commentsCount === 'number' && (
+                            <span >
+                                ({commentsCount})
+                            </span>
+                        )}
+                    </div>
+                )}
 
                 {/* 6. Course Content */}
                 <div>
@@ -237,7 +313,31 @@ function CoursePage() {
                     </div>
                 )}
 
-               {/* 9. Comments Section  */}
+               {/* 9. Rating Section */}
+                <div className="rating-section">
+                    <h3><strong>Rate this course</strong></h3>
+                    {!isEnrolled ? (
+                        <p >Enroll to rate this course.</p>
+                    ) : (
+                        <div className="rate-controls" >
+                            {[1,2,3,4,5].map((n) => (
+                                <button
+                                    key={n}
+                                    type="button"
+                                    onClick={() => saveUserRating(n)}
+                                    aria-label={`Rate ${n} star${n>1? 's':''}`}
+                                >
+                                    ★
+                                </button>
+                            ))}
+                            {userRating > 0 && (
+                                <span>{userRating}.0</span>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+               {/* 10. Comments Section  */}
                 <div className="comments-section">
                     <hr />
                     {/* Comment form */}
