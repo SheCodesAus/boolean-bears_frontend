@@ -133,3 +133,26 @@
   background: var(--brand);
   color: var(--white);
 }
+
+/* Status badges (Enrolled, Full, Capacity) */
+.status-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  min-height: 28px;
+  margin: 4px 0 8px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #d0d7de;
+}
+
+.status-badge.enrolled { background: #e6ffe6; color: #035; border-color: #b2e6b2; }
+.status-badge.full { background: #ffe6e6; color: #530; border-color: #e6b2b2; }
+.status-badge.capacity { background: #f3f4f6; color: var(--black); }
