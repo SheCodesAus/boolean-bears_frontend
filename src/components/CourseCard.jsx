@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth"
+import { enroll, isEnrolled, isFull, getCount } from "../utils/enrollment";
 import "./CourseCard.css";
 import categoryImages from "../utils/category-images";
 import { categoryDisplay } from "../utils/category-display";
@@ -13,18 +14,42 @@ function CourseCard(props) {
     const navigate = useNavigate();
     
     const likesCount = courseData?.likes_count ?? courseData?.likes ?? 0;
+    const courseId = courseData?.id;
+    const maxStudents = Number(courseData?.max_students ?? courseData?.capacity ?? 0) || null;
+    const enrolledCount = getCount(courseId);
+    const youAreEnrolled = isEnrolled(courseId, auth?.username);
+    const courseIsFull = isFull(courseId, maxStudents);
 
     // Create the click handler
     const handleCardClick = () => {
-        // Check if token exists in auth object
-        if (auth && auth.token) {
-            // User is logged in -> go to course page
-            navigate(`/course/${courseData.id}`);
-        // User is NOT logged in -> Go to Login Page
-        } else {
+        if (!auth || !auth.token) {
             alert("Please log in to view course details.");
-            navigate("/login")
+            navigate("/login");
+            return;
         }
+
+        // If course is full and user is not enrolled, block access entirely
+        if (courseIsFull && !youAreEnrolled) {
+            alert("Sorry, this course is full.");
+            return; // Do not navigate to the course page
+        }
+
+        const confirmJoin = window.confirm("Do you want to join this course now?");
+        if (confirmJoin) {
+            if (youAreEnrolled) {
+                alert("You're already enrolled. Taking you to the course page.");
+            } else {
+                const res = enroll(courseId, auth?.username, maxStudents);
+                if (!res.ok) {
+                    if (res.reason === "full") alert("Sorry, this course is full.");
+                    else if (res.reason === "already") alert("You're already enrolled.");
+                } else {
+                    alert("Enrollment confirmed! Redirecting to course page.");
+                }
+            }
+        }
+
+        navigate(`/course/${courseId}`);
     };
 
     const slugify = (text) => {
@@ -52,6 +77,17 @@ function CourseCard(props) {
                 className="course-image"
             />
             <h2 className="card-title">{courseData.title}</h2>
+            <div className="status-row">
+                {youAreEnrolled && (
+                    <span className="status-badge enrolled">Enrolled</span>
+                )}
+                {courseIsFull && (
+                    <span className="status-badge full">Full</span>
+                )}
+                {maxStudents && (
+                    <span className="status-badge capacity">{enrolledCount}/{maxStudents}</span>
+                )}
+            </div>
             <p className="category-row">
                 <span className={`category-badge ${catClass(courseData.category)}`}>
                     {categoryDisplay[courseData.category] || courseData.category}
