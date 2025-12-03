@@ -8,7 +8,8 @@ import AboutPage from "./pages/AboutPage";
 import CoursePage from "./pages/CoursePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import CreateCoursePage from "./pages/CreateCoursePage.jsx";
-import CreateAccountPage from "./pages/CreateAccountPage.jsx"; 
+import CreateAccountPage from "./pages/CreateAccountPage.jsx";
+import UserPage from './pages/UserPage.jsx'; 
 
 import NavBar from "./components/NavBar.jsx";
 import { AuthProvider } from './components/AuthProvider.jsx';
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
           { path: "/course/update/:id", element: <UpdateCoursePage /> },
           { path: "/createcourse", element: <CreateCoursePage /> },
           { path: "/createaccount", element: <CreateAccountPage /> },
+          { path: "/users/:id", element: <UserPage />},
       ],
     },
   ],
