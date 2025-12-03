@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/use-auth";
 import { ThumbsUp } from "lucide-react";
@@ -193,7 +193,7 @@ function CoursePage() {
                 <h2>{categoryDisplay[course.category] || course.category}</h2>
                 
                 {/* 4. By Owner */}
-                <h3><strong>by</strong> {course.owner}</h3>
+                <h3><strong>by</strong> <Link to={`/users/${course.owner_id}`}>{course.owner}</Link></h3>
 
                 {/* 5. Brief Description */}
                 <p>{course.brief_description}</p>
