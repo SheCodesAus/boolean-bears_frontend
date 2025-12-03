@@ -1,35 +1,41 @@
 import React from "react";
+import arsenImg from "../assets/Arsen.jpg";
+import emilyImg from "../assets/Emily.jpg";
+import jessImg from "../assets/Jessica.jpg";
+import qinImg from "../assets/Qin.jpg";
+import stephImg from "../assets/Steph.jpg";
 import "./AboutPage.css";
+import { Stethoscope } from "lucide-react";
 
 const teamMembers = [
     {
         name: "Arsen ILHAN",
         role: "Backend Wizard & Adventurous Learner",
-        image: "src/assets/Arsen.jpg",
+        image: arsenImg,
         bio: "Arsen brings backend mastery and a fearless love of learning, eagerly jumping into new challenges and supporting her team at every turn.",
     },
     {
         name: "Emily Sheridan",
         role: "Full Stack Developer & Customer Experience Specialist",
-        image: "src/assets/Emily.jpg",
+        image: emilyImg,
         bio: "Emily blends full-stack development with strong customer-focused product thinking, turning user stories and journey maps into intuitive digital solutions.",
     },
     {
         name: "Jessica Keating",
         role: "Full Stack Developer & Digital Project Manager",
-        image: "src/assets/Jessica.jpg",
+        image: jessImg,
         bio: "Jessica brings together technical development and project management experience to create smooth, user-centred digital experiences.",
     },
     {
         name: "Qin Shen",
         role: "Full Stack Developer & User Flow Architect",
-        image: "src/assets/Qin.jpg",
+        image: qinImg,
         bio: "Qin blends full-stack engineering with user-flow architecture, using her systems mindset and sharp problem-solving skills to turn complex interactions into smooth, intuitive product journeys.",
     },
     {   
         name: "Steph Chan",
         role: "Full Stack Developer & Pebble Enthusiast",
-        image: "src/assets/Steph.jpg",
+        image: stephImg,
         bio: "Steph is a collaborative full-stack developer who builds with care, clarity, and a well-curated rock collection.",
     }
 ];
