@@ -20,6 +20,7 @@ import { handleFileUpload } from "../api/post-uploadandregister";
 import postRating from "../api/post-rating";
 import getRating from "../api/get-rating";
 import { isEnrolled as isEnrolledUtil } from "../utils/enrollment";
+import { enroll as enrollUtil, isFull as isFullUtil, getCount as getCountUtil } from "../utils/enrollment";
 
 function CoursePage() {
     const navigate = useNavigate();
@@ -134,6 +135,14 @@ function CoursePage() {
 
     // Enrollment check (frontend-only): use shared utils/enrollment to ensure consistency
     const isEnrolled = isEnrolledUtil(id, auth?.username);
+    const maxStudents = Number(course?.max_students ?? course?.capacity ?? 0) || null;
+    const enrolledCount = getCountUtil(id);
+    const courseIsFull = isFullUtil(id, maxStudents);
+    const enrollEndISO = course?.enrollment_end ?? course?.enrollmentEnd ?? null;
+    const enrollEndDate = enrollEndISO ? new Date(enrollEndISO) : null;
+    const enrollClosed = enrollEndDate && !Number.isNaN(enrollEndDate.getTime())
+        ? (Date.now() > enrollEndDate.getTime())
+        : false;
 
     // User rating state - initialize from backend if available
     const [userRating, setUserRating] = useState(0);
@@ -257,6 +266,36 @@ function CoursePage() {
                 {/* 4. By Owner */}
                 <h3><strong>by</strong> {course.owner}</h3>
 
+                {/* Meta row: duration, enrol-by, max students, enrollment status (styling in CSS) */}
+                <div className="meta-row">
+                    {(() => {
+                        const durRaw = course?.duration_in_hours ?? course?.duration;
+                        const dur = Number(durRaw);
+                        return Number.isFinite(dur) && dur > 0 ? (
+                            <span className="meta-item" aria-label="Duration">⏱️ {dur}h</span>
+                        ) : null;
+                    })()}
+                    {(() => {
+                        const enrollEndISO = course?.enrollment_end ?? course?.enrollmentEnd ?? null;
+                        const dt = enrollEndISO ? new Date(enrollEndISO) : null;
+                        const valid = dt && !Number.isNaN(dt.getTime());
+                        const text = valid ? dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
+                        return text ? (
+                            <span className="meta-item" aria-label="Enrol by">📅 Enrol by {text}</span>
+                        ) : null;
+                    })()}
+                    {(() => {
+                        const maxRaw = course?.max_students ?? course?.capacity;
+                        const max = Number(maxRaw);
+                        return Number.isFinite(max) && max > 0 ? (
+                            <span className="meta-item" aria-label="Max students">👤 Max {max}</span>
+                        ) : null;
+                    })()}
+                    {isEnrolled && (
+                        <span className="meta-item enrolled" aria-label="Enrolled">✅ Enrolled</span>
+                    )}
+                </div>
+
                 {/* 5. Brief Description + Rating summary */}
                 <p>
                     {course.brief_description}
@@ -310,6 +349,45 @@ function CoursePage() {
                         >
                             Delete Course
                         </button>
+                    </div>
+                )}
+
+                {/* Enroll action */}
+                {!isOwner && !isEnrolled && (
+                    <div className="course-actions">
+                        <button
+                            className="btn-enroll"
+                            onClick={() => {
+                                if (!auth || !auth.token) {
+                                    alert("Please log in to enroll.");
+                                    navigate("/login");
+                                    return;
+                                }
+                                if (enrollClosed) {
+                                    alert("Enrollment is closed.");
+                                    return;
+                                }
+                                if (courseIsFull) {
+                                    alert("Sorry, this course is full.");
+                                    return;
+                                }
+                                const res = enrollUtil(id, auth?.username, maxStudents);
+                                if (!res.ok) {
+                                    alert(res.reason === "full" ? "Sorry, this course is full." : "Already enrolled.");
+                                    return;
+                                }
+                                alert("Enrolled successfully!");
+                                navigate(`/course/${id}`);
+                            }}
+                        >
+                            Enroll
+                        </button>
+                        {Number.isFinite(maxStudents) && maxStudents > 0 && (
+                            <span className="enroll-hint">{Math.max(0, maxStudents - enrolledCount)} spots left</span>
+                        )}
+                        {enrollClosed && (
+                            <span className="enroll-hint">Enrollment closed</span>
+                        )}
                     </div>
                 )}
 

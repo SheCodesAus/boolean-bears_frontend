@@ -27,8 +27,9 @@ export function getEnrollment(courseId) {
 
 export function isEnrolled(courseId, username) {
     if (!username) return false;
+    const uname = String(username).trim().toLowerCase();
     const { users } = getEnrollment(courseId);
-    return users.includes(username);
+    return users.map(u => String(u).trim().toLowerCase()).includes(uname);
 }
 
 export function getCount(courseId) {
@@ -46,17 +47,22 @@ export function enroll(courseId, username, maxStudents) {
     const all = loadAll();
     const record = all[key] || { users: [] };
     const users = Array.isArray(record.users) ? record.users : [];
+    const uname = username ? String(username).trim().toLowerCase() : "";
+    if (!uname) {
+        return { ok: false, reason: "no-user", count: users.length };
+    }
 
-    if (username && users.includes(username)) {
+    const normalizedUsers = users.map(u => String(u).trim().toLowerCase());
+    if (normalizedUsers.includes(uname)) {
         return { ok: false, reason: "already", count: users.length };
-    } 
+    }
 
     const max = Number(maxStudents);
     if (Number.isFinite(max) && max > 0 && users.length >= max) {
         return { ok: false, reason: "full", count: users.length };
     }
 
-    const newUsers = username ? [...users, username] : users;
+    const newUsers = [...normalizedUsers, uname];
     all[key] = { users: newUsers };
     saveAll(all);
     return { ok: true, reason: null, count: newUsers.length };

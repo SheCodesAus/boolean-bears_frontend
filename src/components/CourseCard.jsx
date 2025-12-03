@@ -18,6 +18,7 @@ function CourseCard(props) {
     const maxStudents = Number(courseData?.max_students ?? courseData?.capacity ?? 0) || null;
     const enrolledCount = getCount(courseId);
     const youAreEnrolled = isEnrolled(courseId, auth?.username);
+    const isOwner = auth?.username && courseData?.owner && String(auth.username) === String(courseData.owner);
     const courseIsFull = isFull(courseId, maxStudents);
     // Enrollment end: accept ISO strings or date-like strings
     const enrollEndISO = courseData?.enrollment_end ?? courseData?.enrollmentEnd ?? null;
@@ -33,34 +34,29 @@ function CourseCard(props) {
             navigate("/login");
             return;
         }
-
-        // If course is full or enrollment period ended and user is not enrolled, block access entirely
-        if ((courseIsFull || enrollClosed) && !youAreEnrolled) {
-            alert("Sorry, this course is full.");
-            return; // Do not navigate to the course page
+        // Owner can always view
+        if (isOwner) {
+            navigate(`/course/${courseId}`);
+            return;
         }
-
-            const confirmJoin = window.confirm("Do you want to join this course now?");
-            if (confirmJoin) {
-                const res = enroll(courseId, auth?.username, maxStudents);
-                if (!res.ok) {
-                    if (res.reason === "full") {
-                        alert("Sorry, this course is full.");
-                        return;
-                    } else if (res.reason === "already") {
-                        navigate(`/course/${courseId}`);
-                        return;
-                    }
-                    return;
-                }
-                navigate(`/course/${courseId}`);
-                return;
-            } else {
-                // User cancelled enrollment: take them back to Home
-                navigate("/");
+        // If enrollment closed or full and user not enrolled, block
+        if ((courseIsFull || enrollClosed) && !youAreEnrolled) {
+            alert(enrollClosed ? "Enrollment is closed." : "Sorry, this course is full.");
+            return;
+        }
+        // If not enrolled, ask to enroll before viewing
+        if (!youAreEnrolled) {
+            const confirmJoin = window.confirm("You are not enrolled. Enroll now to view this course?");
+            if (!confirmJoin) {
+                return; // do not navigate to content
+            }
+            const res = enroll(courseId, auth?.username, maxStudents);
+            if (!res.ok) {
+                alert(res.reason === "full" ? "Sorry, this course is full." : "Enrollment failed.");
                 return;
             }
-
+            alert("Enrolled successfully!");
+        }
         navigate(`/course/${courseId}`);
     };
 
@@ -125,10 +121,13 @@ function CourseCard(props) {
                     <span className="meta-item" aria-label="Duration">⏱️ {durationHours}h</span>
                 )}
                 {enrolByText && (
-                    <span className="meta-item" aria-label="Enrol by">📅 Enrol by {enrolByText}</span>
+                    <span className="meta-item" aria-label="Enrollment closes">📅 Enrollment closes {enrolByText}</span>
                 )}
                 {typeof maxStudents === 'number' && maxStudents > 0 && (
                     <span className="meta-item" aria-label="Max students">👤 Max {maxStudents}</span>
+                )}
+                {youAreEnrolled && (
+                    <span className="meta-item enrolled" aria-label="Enrolled">✅ Enrolled</span>
                 )}
             </div>
 
