@@ -14,6 +14,7 @@ import UserPage from './pages/UserPage.jsx';
 import NavBar from "./components/NavBar.jsx";
 import { AuthProvider } from './components/AuthProvider.jsx';
 import UpdateCoursePage from "./pages/UpdateCoursePage.jsx";
+import Footer from "./components/Footer.jsx";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
       <AuthProvider>
         <RouterProvider router={router} />
+        <Footer />
       </AuthProvider>
   </React.StrictMode>
 );
