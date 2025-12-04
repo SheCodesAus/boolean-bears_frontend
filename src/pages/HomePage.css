@@ -13,6 +13,17 @@
   gap: 16px;
 }
 
+/* All Courses: render circular thumbnails consistently */
+#course-list .course-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  margin: 8px auto 10px; /* center inside card */
+}
+
 .all-courses-section h2 {
   margin: 0 0 var(--padding-medium);
 }
@@ -132,6 +143,17 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-auto-rows: 1fr;
   gap: 16px;
+}
+
+/* Featured: show circular thumbnails to match landing categories */
+.featured-list .course-image {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  margin: 8px auto 10px; /* center inside card */
 }
 
 /* Carousel styles for Featured */
