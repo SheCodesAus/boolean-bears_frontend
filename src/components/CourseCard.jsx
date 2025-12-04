@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth"
 import { enroll, isEnrolled, isFull, getCount } from "../utils/enrollment";
+import { isCompleted as isCompletedUtil } from "../utils/completion";
 import "./CourseCard.css";
 import categoryImages from "../utils/category-images";
 import { categoryDisplay } from "../utils/category-display";
@@ -18,6 +19,7 @@ function CourseCard(props) {
     const maxStudents = Number(courseData?.max_students ?? courseData?.capacity ?? 0) || null;
     const enrolledCount = getCount(courseId);
     const youAreEnrolled = isEnrolled(courseId, auth?.username);
+    const youCompleted = isCompletedUtil(auth?.username, courseId);
     const isOwner = auth?.username && courseData?.owner && String(auth.username) === String(courseData.owner);
     const courseIsFull = isFull(courseId, maxStudents);
     // Enrollment end: accept ISO strings or date-like strings
@@ -128,6 +130,9 @@ function CourseCard(props) {
                 )}
                 {youAreEnrolled && (
                     <span className="meta-item enrolled" aria-label="Enrolled">✅ Enrolled</span>
+                )}
+                {youCompleted && (
+                    <span className="meta-item completed" aria-label="Completed">🏁 Completed</span>
                 )}
             </div>
 

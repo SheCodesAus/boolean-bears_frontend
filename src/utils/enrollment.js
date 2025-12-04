@@ -75,3 +75,17 @@ export function enroll(courseId, username, maxStudents) {
     isFull,
     enroll,
     };
+
+// Return a list of course IDs the given user is enrolled in (from localStorage)
+export function getCoursesForUser(username) {
+    const uname = String(username || "").trim().toLowerCase();
+    if (!uname) return [];
+    const all = loadAll();
+    const result = [];
+    for (const [cid, record] of Object.entries(all)) {
+        const users = Array.isArray(record?.users) ? record.users : [];
+        const normalized = users.map(u => String(u).trim().toLowerCase());
+        if (normalized.includes(uname)) result.push(String(cid));
+    }
+    return result;
+}

@@ -157,6 +157,9 @@
 }
 
 .meta-item { white-space: nowrap; }
+.meta-item.completed { color: var(--highlight); font-weight: 600; }
+
+.completion-row { margin: 8px 0; }
 
 .social-row {
   display: flex;

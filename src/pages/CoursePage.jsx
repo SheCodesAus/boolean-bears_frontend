@@ -20,6 +20,8 @@ import { handleFileUpload } from "../api/post-uploadandregister";
 import postRating from "../api/post-rating";
 import getRating from "../api/get-rating";
 import { isEnrolled as isEnrolledUtil } from "../utils/enrollment";
+import { isCompleted as isCompletedUtil, toggleCompleted as toggleCompletedUtil } from "../utils/completion";
+import "./CoursePage.css";
 import { enroll as enrollUtil, isFull as isFullUtil, getCount as getCountUtil } from "../utils/enrollment";
 
 function CoursePage() {
@@ -219,6 +221,12 @@ function CoursePage() {
     })();
     const commentsCount = Array.isArray(comments) ? comments.length : (course?.comments_count ?? null);
 
+    // Completion state for current user (local)
+    const [completed, setCompleted] = useState(false);
+    useEffect(() => {
+        setCompleted(isCompletedUtil(auth?.username, id));
+    }, [auth?.username, id]);
+
     // Early returns must come after all hooks
     if (isLoading) {
         return (<p>loading...</p>)
@@ -234,105 +242,122 @@ function CoursePage() {
 
     return (
     <div className="course-page">
-        {/* 1. Course Image */}
-        <div className="course-header">
-            <img 
-                src={categoryImages[course.category] || categoryImages["other"]} 
-                className="course-detail-image"
-                alt={course.title}
-            />
-        </div> 
-        <div className="image-likes">
-            <button
-                className="like-button"
-                onClick={incrementLikes}
-                aria-label="Like this course"
-                disabled={hasLiked || liking}
-                title={hasLiked ? "You already liked this course" : "Like this course"}
-            >
-                <ThumbsUp />
-            </button>
-            <span className="likes-count">{likes} Likes</span>
-        </div>
-            <div className="course-content">
-                {/* 2. Course Title */}
-                <h1 className="course-title">
-                    {course.title}
-                </h1>
-                
-                {/* 3. Category */}
-                <h2>{categoryDisplay[course.category] || course.category}</h2>
-                
-                {/* 4. By Owner */}
-                <h3><strong>by</strong> <Link to={`/users/${course.owner_id}`}>{course.owner}</Link></h3>
-
-                {/* Meta row: duration, enrol-by, max students, enrollment status (styling in CSS) */}
-                <div className="meta-row">
+        {/* Udemy-style hero */}
+        <section className="course-hero">
+            <div className="hero-media">
+                <img 
+                    src={categoryImages[course.category] || categoryImages["other"]} 
+                    className="hero-image"
+                    alt={course.title}
+                />
+            </div>
+            <div className="hero-overlay">
+                <h1 className="hero-title">{course.title}</h1>
+                <div className="hero-stats">
                     {(() => {
                         const durRaw = course?.duration_in_hours ?? course?.duration;
                         const dur = Number(durRaw);
                         return Number.isFinite(dur) && dur > 0 ? (
-                            <span className="meta-item" aria-label="Duration">⏱️ {dur}h</span>
+                            <span className="stat">⏱️ {dur}h</span>
                         ) : null;
                     })()}
-                    {(() => {
-                        const enrollEndISO = course?.enrollment_end ?? course?.enrollmentEnd ?? null;
-                        const dt = enrollEndISO ? new Date(enrollEndISO) : null;
-                        const valid = dt && !Number.isNaN(dt.getTime());
-                        const text = valid ? dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
-                        return text ? (
-                            <span className="meta-item" aria-label="Enrol by">📅 Enrol by {text}</span>
-                        ) : null;
-                    })()}
-                    {(() => {
-                        const maxRaw = course?.max_students ?? course?.capacity;
-                        const max = Number(maxRaw);
-                        return Number.isFinite(max) && max > 0 ? (
-                            <span className="meta-item" aria-label="Max students">👤 Max {max}</span>
-                        ) : null;
-                    })()}
-                    {isEnrolled && (
-                        <span className="meta-item enrolled" aria-label="Enrolled">✅ Enrolled</span>
+                    {/* Rating removed from hero overlay */}
+                    {completed && <span className="stat completed">🏁 Completed</span>}
+                </div>
+                <div className="hero-actions">
+                    {!isOwner && !isEnrolled && (
+                        <button className="btn-primary" onClick={() => {
+                            if (!auth || !auth.token) { alert("Please log in to enroll."); navigate("/login"); return; }
+                            if (enrollClosed) { alert("Enrollment is closed."); return; }
+                            if (courseIsFull) { alert("Sorry, this course is full."); return; }
+                            const res = enrollUtil(id, auth?.username, maxStudents);
+                            if (!res.ok) { alert(res.reason === "full" ? "Sorry, this course is full." : "Already enrolled."); return; }
+                            alert("Enrolled successfully!"); navigate(`/course/${id}`);
+                        }}>Enroll now</button>
+                    )}
+                </div>
+            </div>
+        </section>
+        {/* Category badge below the image, matching Courses page style, with right-aligned like + rating */}
+        <div className="category-row">
+            <span className="category-badge">{categoryDisplay[course.category] || course.category}</span>
+            <div className="category-like-control">
+                <span className="likes-count-inline">{likes}</span>
+                <button
+                    className="like-button-inline"
+                    onClick={incrementLikes}
+                    aria-label="Like this course"
+                    disabled={hasLiked || liking}
+                    title={hasLiked ? "You already liked this course" : "Like this course"}
+                >
+                    <ThumbsUp />
+                </button>
+                {averageRating != null && (
+                    <span className="rating-inline" aria-label="Average rating">⭐ {averageRating.toFixed(1)}</span>
+                )}
+            </div>
+        </div>
+        {/* What You Will Learn heading and content */}
+        <div className="brief-description-section">
+            <h3><strong>What You Will Learn</strong></h3>
+            <p>{course.brief_description}</p>
+        </div>
+        <div className="course-content">
+                
+                <div className="meta-row">
+                    {/* Duration removed as requested */}
+                    {/* Enrollment date removed as requested */}
+                    {/* Removed max students display */}
+                    {/* Enrolled badge removed per request */}
+                    {completed && (
+                        <span className="meta-item completed" aria-label="Completed">🏁 Completed</span>
                     )}
                 </div>
 
-                {/* 5. Brief Description + Rating summary */}
-                <p>
-                    {course.brief_description}
-                </p>
-                {(averageRating != null || typeof commentsCount === 'number') && (
-                    <div >
-                        <span aria-label="Average rating">
-                            ⭐ {averageRating != null ? averageRating.toFixed(1) : '—'}
-                        </span>
-                        {typeof commentsCount === 'number' && (
-                            <span >
-                                ({commentsCount})
-                            </span>
+                {/* Rating summary removed per request */}
+
+                {/* 6 & 8. Group Course Content and Course Materials in one container */}
+                <div className="course-resources-section">
+                    <div className="course-content-section">
+                        <h3><strong>Course Content</strong></h3>
+                        <div
+                            className="rendered-content"
+                            dangerouslySetInnerHTML={{ __html: decodeHTML(course.course_content) }}
+                        />
+                    </div>
+                    <div className="course-materials-section">
+                        <h3><strong>Course Materials</strong></h3>
+                        {course.image ? ( 
+                            <a href ={course.image} target="_blank" rel="noopener noreferrer">
+                                View Course Material
+                            </a>
+
+                        ) : (
+                            <p>No files uploaded for this course.</p>
                         )}
                     </div>
-                )}
-
-                {/* 6. Course Content */}
-                <div>
-                <h3><strong>Course Content</strong></h3>
-                <div
-                    className="rendered-content"
-                    dangerouslySetInnerHTML={{ __html: decodeHTML(course.course_content) }}
-                />
                 </div>
 
-                {/* 8. Course Materials */}
-                <div className="course-materials">
-                    <h3><strong>Course Materials</strong></h3>
-                    {course.image ? ( 
-                        <a href ={course.image} target="_blank" rel="noopener noreferrer">
-                            View Course Material
-                        </a>
-
-                    ) : (
-                        <p>No files uploaded for this course.</p>
-                    )} </div>
+                {/* Completion toggle moved below Course Content */}
+                <div className="completion-row">
+                    <button
+                        type="button"
+                        className={completed ? "btn-completed" : "btn-complete"}
+                        onClick={() => {
+                            if (!auth?.username) {
+                                alert("Please log in to track completion.");
+                                navigate("/login");
+                                return;
+                            }
+                            toggleCompletedUtil(auth.username, id);
+                            setCompleted(isCompletedUtil(auth.username, id));
+                        }}
+                        aria-pressed={completed}
+                        aria-label={completed ? "Mark as not completed" : "Mark as completed"}
+                    >
+                        {completed ? "Completed ✓" : "Mark as Completed"}
+                    </button>
+                </div>
 
                 {/* To display uploaded files ends */}
                 {isOwner && (
@@ -418,16 +443,16 @@ function CoursePage() {
                {/* 10. Comments Section  */}
                 <div className="comments-section">
                     <hr />
-                    {/* Comment form */}
-                    <CommentForm
-                        courseId={id}
-                        onCommentAdded={handleCommentAdded}
-                    />
-                    {/* Comment List */}
+                    {/* Comment List first */}
                     <CommentList
                         comments={comments}
                         isLoading={commentsLoading}
                         error={commentsError}
+                    />
+                    {/* Comment form after all comments */}
+                    <CommentForm
+                        courseId={id}
+                        onCommentAdded={handleCommentAdded}
                     />
                 </div>
             </div>

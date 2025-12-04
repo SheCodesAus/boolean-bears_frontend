@@ -1,3 +1,12 @@
+.mission {
+  background-color: var(--teal);
+  border: 1px solid #e6e8eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.mission h2 { margin-top: 0; }
+.mission p { margin-bottom: 0.75rem; }
 /* Yarning Circles theme: calm blues, earthy neutrals, circular motifs */
 
 .landing-root {
@@ -98,9 +107,9 @@ font-size: clamp(2rem, 4vw, 3rem);
 /* Background blocks using the four circle colors */
 .feature-card:nth-child(1) { background: var(--circle-4); }
 .feature-card:nth-child(2) { background: var(--circle-3); }
-.feature-card:nth-child(3) { background: var(--circle-2); color: #fff; }
+.feature-card:nth-child(3) { background: var(--circle-2); }
 .feature-card:nth-child(3) .icon { color: #fff; }
-.feature-card:nth-child(4) { background: var(--circle-1); color: #fff; }
+.feature-card:nth-child(4) { background: var(--circle-1); }
 .feature-card:nth-child(4) .icon { color: #fff; }
 
 .culture { border: 1px solid #eee; border-radius: 12px; padding: 1rem; background: #fafafa; }

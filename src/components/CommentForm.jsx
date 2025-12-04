@@ -32,12 +32,19 @@ function CommentForm({ courseId, onCommentAdded }) {
             // 6. Post to API
             const newComment = await postComment(courseId, commentData, auth.token);
 
+            // Ensure UI has author and timestamp even if backend omits them
+            const hydratedComment = {
+                ...newComment,
+                author: newComment.author ?? auth.username ?? "You",
+                created_at: newComment.created_at ?? new Date().toISOString(),
+            };
+
             // 7. Clear form
             setComment("");
 
             // 8. Notify parent component
             if (onCommentAdded) {
-                onCommentAdded(newComment);
+                onCommentAdded(hydratedComment);
             }
         } catch (err) {
             console.error("Failed to post comment:", err);
@@ -49,8 +56,8 @@ function CommentForm({ courseId, onCommentAdded }) {
 
     // 10. Render form
     return (
-        <form onSubmit={handleSubmit} className="comment-form"> 
-            <h3>Comment</h3>
+        <form onSubmit={handleSubmit} className="comment-form" style={{ width: "100%", maxWidth: "100%" }}> 
+            <h3>Leave a Comment</h3>
             {error && <p>{error}</p>}
 
             <textarea
@@ -60,9 +67,10 @@ function CommentForm({ courseId, onCommentAdded }) {
                 rows="4"
                 required
                 disabled={loading}
+                style={{ width: "100%" }}
             />
 
-            <button type="submit" disabled={loading || !comment.trim()}>
+            <button type="submit" disabled={loading || !comment.trim()} style={{ alignSelf: "flex-start" }}>
                 {loading ? "Posting...": "Post Comment"}
             </button>
         </form>

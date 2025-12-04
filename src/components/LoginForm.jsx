@@ -32,9 +32,13 @@ function LoginForm() {
             ).then((response) => {
                 window.localStorage.setItem("token", response.token);
                 window.localStorage.setItem("username", credentials.username);
+                if (response.user_id != null) {
+                    window.localStorage.setItem("user_id", String(response.user_id));
+                }
                 setAuth({
                     token: response.token,
                     username: credentials.username,
+                    userId: response.user_id != null ? String(response.user_id) : null,
                 });
                 navigate("/");
             });

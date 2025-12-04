@@ -20,22 +20,28 @@ function NavBar() {
         </Link>
 
         <Link to="/about">About</Link>
+        <Link to="/courses">Courses</Link>
 
         <Link to="/createcourse">Create A Course</Link>
-
-        <Link to="/createaccount">Create An Account</Link>
 
         {auth.token ? (
             <>
                 <Link to="/" onClick={handleLogout}>
                     Log Out
                 </Link>
-                <span className="navbar-user">
+                <Link
+                    to={auth.userId ? `/users/${auth.userId}` : (auth.username ? `/users/${auth.username}` : "/")}
+                    className="navbar-user"
+                    aria-label="View your profile"
+                >
                     Hello, {auth.username || "User"}
-                </span>
+                </Link>
             </>
             ) : (
-            <Link to="/login">Log In</Link>
+                        <>
+                            <Link to="/createaccount">Create An Account</Link>
+                            <Link to="/login">Log In</Link>
+                        </>
         )}
 
         </nav>
