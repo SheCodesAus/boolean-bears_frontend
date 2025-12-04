@@ -6,10 +6,10 @@ function Footer() {
     return (
         <footer className="site-footer" role="contentinfo">
         <div className="footer-inner">
-            <div className="footer-brand">
-            <span className="logo" aria-label="Boolean Bears">🧸 Boolean Bears</span>
-            <span className="tagline">Learn, build, and share.</span>
-            </div>
+                <div className="footer-brand">
+                    <a href="/" className="logo" aria-label="Go to Home">🧸 Boolean Bears</a>
+                    <span className="tagline">Learn, build, and share.</span>
+                </div>
             <div className="footer-meta">
             <div className="social">
                 <a href="https://github.com/SheCodesAus" className="social-link" aria-label="GitHub" target="_blank" rel="noreferrer">GitHub</a>
