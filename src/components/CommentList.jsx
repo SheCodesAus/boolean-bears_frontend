@@ -1,16 +1,21 @@
+import React from 'react';
+
 function CommentList({ comments, isLoading, error }) {
-    // 1. Loading state - show spinner
+    
+    // 1. Loading State
     if (isLoading) {
-        return <p>Loading comments...</p>;
+        return <p className="text-muted">Loading comments...</p>;
     }
-    // 2. Error state - show error message
+
+    // 2. Error State
     if (error) {
-        return <p>Error loading comments: {error.message}</p>;
+        return <p className="text-muted">Error loading comments.</p>;
     }
-    // 3. Empty state - show helpful message
+
+    // 3. Empty State (Uses the CSS class .empty-comments)
     if (!comments || comments.length === 0) {
         return (
-            <div>
+            <div className="empty-comments">
                 <p>No comments yet. Be the first!</p>
             </div>
         );
@@ -25,27 +30,34 @@ function CommentList({ comments, isLoading, error }) {
             day: "numeric",
             month: "short",
             year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
         }); 
     };
 
-    // 5. Main render - map over comments
+    // 5. Main render
     return (
-        <div className="comment-list">
-            <h3>Comments ({comments.length})</h3>
+        <ul className="comment-list">
             {comments.map((comment) => (
-                <div key={comment.id} className="comment-item">
+                <li key={comment.id} className="comment-item">
+                    
+                    {/* Header: Name & Date */}
                     <div className="comment-header">
-                        <span className="comment-auth">{comment.author}</span>
-                        <span className="comment-date">{formatDate(comment.created_at)}</span>
+                        {/* Checked: using 'commenter' || 'author' to be safe */}
+                        <span className="comment-author">
+                            {comment.commenter || comment.author || "Anonymous"}
+                        </span>
+                        
+                        <span className="comment-date">
+                            {formatDate(comment.date_created || comment.created_at)}
+                        </span>
                     </div>
-                    <div className="comment-content">
-                        <p>{comment.content}</p>
-                    </div>
-                </div>
+
+                    {/* Checked: using 'body' || 'content' to be safe */}
+                    <p className="comment-text">
+                        {comment.body || comment.content}
+                    </p>
+                </li>
             ))}
-        </div>
+        </ul>
     );
 }
 

@@ -2,6 +2,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/use-auth";
 import { ThumbsUp } from "lucide-react";
+import { Clock, Calendar, Users, CheckCircle, Star} from "lucide-react";
 import { categoryDisplay } from "../utils/category-display";
 
 // API Imports
@@ -21,6 +22,9 @@ import postRating from "../api/post-rating";
 import getRating from "../api/get-rating";
 import { isEnrolled as isEnrolledUtil } from "../utils/enrollment";
 import { enroll as enrollUtil, isFull as isFullUtil, getCount as getCountUtil } from "../utils/enrollment";
+
+// Css Imports
+import "./CoursePage.css"
 
 function CoursePage() {
     const navigate = useNavigate();
@@ -233,203 +237,194 @@ function CoursePage() {
     }
 
     return (
-    <div className="course-page">
-        {/* 1. Course Image */}
-        <div className="course-header">
-            <img 
-                src={categoryImages[course.category] || categoryImages["other"]} 
-                className="course-detail-image"
-                alt={course.title}
-            />
-        </div> 
-        <div className="image-likes">
-            <button
-                className="like-button"
-                onClick={incrementLikes}
-                aria-label="Like this course"
-                disabled={hasLiked || liking}
-                title={hasLiked ? "You already liked this course" : "Like this course"}
-            >
-                <ThumbsUp />
-            </button>
-            <span className="likes-count">{likes} Likes</span>
-        </div>
-            <div className="course-content">
-                {/* 2. Course Title */}
-                <h1 className="course-title">
-                    {course.title}
-                </h1>
-                
-                {/* 3. Category */}
-                <h2>{categoryDisplay[course.category] || course.category}</h2>
-                
-                {/* 4. By Owner */}
-                <h3><strong>by</strong> <Link to={`/users/${course.owner_id}`}>{course.owner}</Link></h3>
+        <div className="course-page">
+            {/* 1. Header Image (Cinematic Banner) */}
+            <div className="course-header">
+                <img 
+                    src={categoryImages[course.category] || categoryImages["other"]} 
+                    className="course-detail-image"
+                    alt={course.title}
+                />
+            </div> 
 
-                {/* Meta row: duration, enrol-by, max students, enrollment status (styling in CSS) */}
-                <div className="meta-row">
-                    {(() => {
-                        const durRaw = course?.duration_in_hours ?? course?.duration;
-                        const dur = Number(durRaw);
-                        return Number.isFinite(dur) && dur > 0 ? (
-                            <span className="meta-item" aria-label="Duration">⏱️ {dur}h</span>
-                        ) : null;
-                    })()}
-                    {(() => {
-                        const enrollEndISO = course?.enrollment_end ?? course?.enrollmentEnd ?? null;
-                        const dt = enrollEndISO ? new Date(enrollEndISO) : null;
-                        const valid = dt && !Number.isNaN(dt.getTime());
-                        const text = valid ? dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
-                        return text ? (
-                            <span className="meta-item" aria-label="Enrol by">📅 Enrol by {text}</span>
-                        ) : null;
-                    })()}
-                    {(() => {
-                        const maxRaw = course?.max_students ?? course?.capacity;
-                        const max = Number(maxRaw);
-                        return Number.isFinite(max) && max > 0 ? (
-                            <span className="meta-item" aria-label="Max students">👤 Max {max}</span>
-                        ) : null;
-                    })()}
-                    {isEnrolled && (
-                        <span className="meta-item enrolled" aria-label="Enrolled">✅ Enrolled</span>
-                    )}
-                </div>
+            <div className="course-content">               
+                {/* === CARD 1: OVERVIEW & ACTIONS === */}
+                {/* This white card sits on top of the banner */}
+                <div className="course-intro-section">
+                    
+                    {/* A. Like Button (Top Right of Card)
+                    <div className="image-likes">
+                        <button
+                            className="like-button"
+                            onClick={incrementLikes}
+                            aria-label="Like this course"
+                            disabled={hasLiked || liking}
+                            title={hasLiked ? "You already liked this course" : "Like this course"}
+                        >
+                            <ThumbsUp /
+                        </button>
+                        <span className="likes-count">{likes} Likes</span>
+                    </div> */}
 
-                {/* 5. Brief Description + Rating summary */}
-                <p>
-                    {course.brief_description}
-                </p>
-                {(averageRating != null || typeof commentsCount === 'number') && (
-                    <div >
-                        <span aria-label="Average rating">
-                            ⭐ {averageRating != null ? averageRating.toFixed(1) : '—'}
-                        </span>
-                        {typeof commentsCount === 'number' && (
-                            <span >
-                                ({commentsCount})
+                    {/* B. Title & Owner */}
+                    <h1 className="course-title">{course.title}</h1>
+                    
+                    <div className="course-header-meta">
+                        <h3>{categoryDisplay[course.category] || course.category}</h3>
+                        <h3>by <Link to={`/users/${course.owner_id}`}>{course.owner}</Link></h3>
+                    </div>
+
+                    {/* C. Stats Row (Duration, Dates, Seats, and Rating) */}
+                    <div className="meta-row">
+                        {/* Duration */}
+                        {(() => {
+                            const dur = Number(course?.duration_in_hours ?? course?.duration);
+                            return Number.isFinite(dur) && dur > 0 ? 
+                                <span className="meta-item"> 
+                                    <Clock className="meta-icon" /> {dur}h
+                                </span> : null;
+                        })()}
+                        {/* Enrol Date */}
+                        {(() => {
+                            const enrollEndISO = course?.enrollment_end ?? course?.enrollmentEnd ?? null;
+                            const dt = enrollEndISO ? new Date(enrollEndISO) : null;
+                            const valid = dt && !Number.isNaN(dt.getTime());
+                            const text = valid ? dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
+                            return text ? 
+                                <span className="meta-item">
+                                    <Calendar className="meta-icon" /> Enrol by {text}
+                                </span> : null;
+                        })()}
+                        {/* Max Students */}
+                        {(() => {
+                            const max = Number(course?.max_students ?? course?.capacity);
+                            return Number.isFinite(max) && max > 0 ? 
+                                <span className="meta-item">
+                                    <Users className="meta-icon" /> Max {max}
+                                </span> : null;
+                        })()}
+
+                        {/* Enrolled Status */}
+                        {isEnrolled && (
+                            <span className="meta-item enrolled">
+                                <CheckCircle className="meta-icon" /> Enrolled
+                            </span>)}
+    
+                        {/* Rating */}
+                        {(averageRating != null || typeof commentsCount === 'number') && (
+                            <span className="meta-item rating-item">
+                                <Star className="meta-icon" fill="currentColor" />
+                                {averageRating != null ? Number(averageRating).toFixed(1) : '—'}
+                                {typeof commentsCount === 'number' && (
+                                    <span className="meta-review-count">({commentsCount} reviews)</span>
+                                )}
                             </span>
                         )}
                     </div>
-                )}
 
-                {/* 6. Course Content */}
-                <div>
-                <h3><strong>Course Content</strong></h3>
-                <div
-                    className="rendered-content"
-                    dangerouslySetInnerHTML={{ __html: decodeHTML(course.course_content) }}
-                />
+                    {/* D. PRIMARY ACTIONS */}
+                    <div className="hero-actions">
+                        {isOwner ? (
+                            <div className="course-actions">
+                                <button className="btn-update" onClick={handleUpdateClick}>Update Course</button>
+                                <button className="btn-delete" onClick={handleDeleteClick}>Delete Course</button>
+                            </div>
+                        ) : !isEnrolled && (
+                            <div className="course-actions">
+                                {enrollClosed ? (
+                                    <span className="enroll-closed-msg">Enrollment is closed</span>
+                                ) : (
+                                    <>
+                                        <button
+                                            className="btn-enroll"
+                                            onClick={() => {
+                                                if (!auth || !auth.token) { alert("Please log in to enroll."); navigate("/login"); return; }
+                                                if (courseIsFull) { alert("Sorry, this course is full."); return; }
+                                                const res = enrollUtil(id, auth?.username, maxStudents);
+                                                if (!res.ok) { alert(res.reason === "full" ? "Sorry, this course is full." : "Already enrolled."); return; }
+                                                alert("Enrolled successfully!");
+                                                navigate(0);
+                                            }}
+                                        >
+                                            Enroll Now
+                                        </button>
+                                        {Number.isFinite(maxStudents) && maxStudents > 0 && (
+                                            <div className="enroll-hint">{Math.max(0, maxStudents - enrolledCount)} spots left</div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* E. Brief Description */}
+                    <div className="course-description">
+                        <h3>Brief Description</h3>
+                        <p>{course.brief_description}</p>
+                    </div>
                 </div>
 
-                {/* 8. Course Materials */}
-                <div className="course-materials">
-                    <h3><strong>Course Materials</strong></h3>
-                    {course.image ? ( 
-                        <a href ={course.image} target="_blank" rel="noopener noreferrer">
-                            View Course Material
-                        </a>
-
-                    ) : (
-                        <p>No files uploaded for this course.</p>
-                    )} </div>
-
-                {/* To display uploaded files ends */}
-                {isOwner && (
-                    <div className="course-actions">
-                        <button 
-                            className="btn-update"
-                            onClick={handleUpdateClick}
-                        >
-                            Update Course
-                        </button>
-                        <button
-                            className="btn-delete"
-                            onClick={handleDeleteClick}
-                        >
-                            Delete Course
-                        </button>
+                {/* CARD 2: DETAILS BODY (Reading Section) */}
+                <div className="course-details-body">
+                    
+                    {/* Section: Content */}
+                    <div className="course-section content-section">
+                        <h3>Course Content</h3>
+                        <div
+                            className="rendered-content"
+                            dangerouslySetInnerHTML={{ __html: decodeHTML(course.course_content) }}
+                        />
                     </div>
-                )}
 
-                {/* Enroll action */}
-                {!isOwner && !isEnrolled && (
-                    <div className="course-actions">
-                        <button
-                            className="btn-enroll"
-                            onClick={() => {
-                                if (!auth || !auth.token) {
-                                    alert("Please log in to enroll.");
-                                    navigate("/login");
-                                    return;
-                                }
-                                if (enrollClosed) {
-                                    alert("Enrollment is closed.");
-                                    return;
-                                }
-                                if (courseIsFull) {
-                                    alert("Sorry, this course is full.");
-                                    return;
-                                }
-                                const res = enrollUtil(id, auth?.username, maxStudents);
-                                if (!res.ok) {
-                                    alert(res.reason === "full" ? "Sorry, this course is full." : "Already enrolled.");
-                                    return;
-                                }
-                                alert("Enrolled successfully!");
-                                navigate(`/course/${id}`);
-                            }}
-                        >
-                            Enroll
-                        </button>
-                        {Number.isFinite(maxStudents) && maxStudents > 0 && (
-                            <span className="enroll-hint">{Math.max(0, maxStudents - enrolledCount)} spots left</span>
-                        )}
-                        {enrollClosed && (
-                            <span className="enroll-hint">Enrollment closed</span>
-                        )}
+                    {/* Section: Materials (Including Owner Upload) */}
+                    <div className="course-section materials-section">
+                        <h3>Course Materials</h3>
+                        <div className="course-materials">
+                            {course.image ? ( 
+                                <a href ={course.image} target="_blank" rel="noopener noreferrer" className="material-link">
+                                    View Course Material
+                                </a>
+                            ) : (
+                                <p>No files uploaded for this course.</p>
+                            )} 
+                            {/* To display uploaded files ends */}
+                        </div>
                     </div>
-                )}
 
-               {/* 9. Rating Section */}
-                <div className="rating-section">
-                    <h3><strong>Rate this course</strong></h3>
-                    {!isEnrolled ? (
-                        <p >Enroll to rate this course.</p>
-                    ) : (
-                        <div className="rate-controls" >
-                            {[1,2,3,4,5].map((n) => (
-                                <button
-                                    key={n}
-                                    type="button"
-                                    onClick={() => saveUserRating(n)}
-                                    aria-label={`Rate ${n} star${n>1? 's':''}`}
-                                >
-                                    ★
-                                </button>
-                            ))}
-                            {userRating > 0 && (
-                                <span>{userRating}.0</span>
+                    {/* Section: Community (Ratings & Comments) */}
+                    <div className="course-section interaction-section">                       
+                        {/* Rating Area */}
+                        <div className="rating-area">
+                            <h3>Rate this course</h3>
+                            {!isEnrolled ? (
+                                <p className="text-muted">Enroll to rate this course.</p>
+                            ) : (
+                                <div className="rate-controls">
+                                    {[1,2,3,4,5].map((n) => (
+                                        <button
+                                            key={n}
+                                            type="button"
+                                            onClick={() => saveUserRating(n)}
+                                            className={n <= userRating ? "active-star" : ""}
+                                        >★</button>
+                                    ))}
+                                    {userRating > 0 && <span>{userRating}.0</span>}
+                                </div>
                             )}
                         </div>
-                    )}
-                </div>
 
-               {/* 10. Comments Section  */}
-                <div className="comments-section">
-                    <hr />
-                    {/* Comment form */}
-                    <CommentForm
-                        courseId={id}
-                        onCommentAdded={handleCommentAdded}
-                    />
-                    {/* Comment List */}
-                    <CommentList
-                        comments={comments}
-                        isLoading={commentsLoading}
-                        error={commentsError}
-                    />
-                </div>
+                        <hr className="divider"/>
+
+                        {/* Comments Area */}
+                        <div className="comments-section">
+                                <CommentForm courseId={id} onCommentAdded={handleCommentAdded} />
+
+                                <div className="comment-list-spacer"></div>
+
+                                <CommentList comments={comments} isLoading={commentsLoading} error={commentsError} />
+                            </div>                              
+                        </div>
+                    </div>
             </div>
         </div>
     );

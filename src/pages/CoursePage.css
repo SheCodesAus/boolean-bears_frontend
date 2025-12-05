@@ -1,71 +1,538 @@
-/* Add these styles for rendered content */
+/* 1. MAIN CONTAINER LAYOUT */
+.course-page {
+    max-width: 960px;
+    margin: 2rem auto 4rem;
+    background-color: var(--white);
+    border-radius: 24px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    overflow: hidden; /* Clips the top image */
+    padding-bottom: 2rem;
+}
+
+/* 2. HEADER IMAGE SECTION */
+.course-header {
+    width: 100%;
+    height: 400px; /* Big dramatic image */
+    background-color: #e6f4ff;
+    position: relative;
+}
+
+.course-detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 3. HERO SECTION (Likes, Title, Meta) */
+.course-content {
+    padding: 1rem 3rem 2rem;
+}
+
+/* Likes (Floating top right or inline) */
+
+/*  
+.image-likes {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.5rem 3rem 0; 
+    margin-bottom: 1rem;
+}
+
+.like-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--brand); Coral
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+} 
+
+.like-button svg {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+    stroke-width: 2px;
+    fill: transparent;
+}
+
+.like-button:disabled svg { fill: var(--brand); }
+.like-button:hover:not(:disabled) { transform: scale(1.1); }
+
+.likes-count {
+    font-family: var(--font-sourcesans);
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--base-dark);
+} 
+    */
+
+/* Typography & Title */
+.course-title {
+    font-family: var(--font-playfair);
+    font-size: 2.5rem;
+    color: var(--black);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 800px;
+}
+
+/* Category & Owner Wrapper*/
+.course-header-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0; 
+    margin-bottom: 2rem;
+    margin-top: 0;
+}
+
+/* Category (Teal) */
+.course-header-meta h3:first-child {
+    font-family: var(--font-sourcesans);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: var(--highlight);
+    margin: 0;
+    line-height: 1.4; 
+}
+
+/* Owner (Grey)) */
+.course-header-meta h3:nth-child(2) {
+    font-family: var(--font-sourcesans);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #666;
+    margin: 0;
+    line-height: 1.4; /* Tighter line height */
+}
+.course-header-meta a {
+    font-weight: 600;
+}
+
+/* Meta Tags (Duration, Date, Icons) */
+.meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Icons stay centered */
+    gap: 1rem;
+    width: 100%;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f7fafc;
+    border: 1px solid #e1e4e8;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--base-dark);
+}
+
+.meta-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--highlight);
+}
+
+.meta-item.enrolled {
+    background-color: #d1fae5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+.meta-item.enrolled .meta-icon { color: #065f46; }
+
+/* 4. DESCRIPTION & RENDERED CONTENT */
+/* Brief Description */
+.course-description p {
+    line-height: 1.6;
+    color: var(--black);
+    margin-bottom: 2rem;
+}
+
+/* Rich Text Content */
 .rendered-content {
+    font-family: var(--font-sourcesans);
+    color: var(--black);
     line-height: 1.8;
-    color: #333;
+    margin-bottom: 3rem;
+    text-align: left;
+    width: 100%;
+    overflow-wrap: break-word;
 }
 
+/* Ensure paragraphs inside content are also standard size */
+.rendered-content p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem; /* Reset to 1rem (16px) instead of 1.1rem */
+    color: var(--black);
+}
+
+/* (The rest of h1, h2, ul, etc. remains the same) */
 .rendered-content h1,
-.rendered-content h2,
-.rendered-content h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
-    color: #2c3e50;
-}
-
 .rendered-content h2 {
-    font-size: 1.8rem;
-    border-bottom: 2px solid #eee;
+    font-family: var(--font-playfair);
+    color: var(--highlight);
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
     padding-bottom: 0.5rem;
 }
 
 .rendered-content h3 {
+    font-family: var(--font-playfair);
     font-size: 1.4rem;
+    color: var(--black);
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    border-bottom: none;
 }
 
-.rendered-content p {
-    margin-bottom: 1rem;
-}
-
-.rendered-content ul,
+.rendered-content ul, 
 .rendered-content ol {
-    margin-left: 2rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    margin-left: 1.5rem;
+    padding-left: 0.5rem;
 }
 
 .rendered-content li {
     margin-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    color: var(--black);
 }
 
 .rendered-content blockquote {
-    border-left: 4px solid #3498db;
-    padding-left: 1rem;
-    margin: 1.5rem 0;
+    border-left: 4px solid var(--action);
+    background-color: #fffbeb;
+    margin: 2rem 0;
+    padding: 1rem 1.5rem;
+    border-radius: 0 12px 12px 0;
+    font-family: var(--font-playfair);
     font-style: italic;
-    color: #555;
-    background-color: #f8f9fa;
-    padding: 1rem;
+    font-size: 1.2rem;
+    color: var(--base-dark);
 }
 
 .rendered-content code {
-    background-color: #f4f4f4;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
+    background-color: #f1f5f9;
+    color: var(--highlight);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
 }
 
-.rendered-content strong {
+.rendered-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.rendered-content a {
+    color: var(--highlight);
+    text-decoration: underline;
     font-weight: 600;
-    color: #2c3e50;
+}
+.rendered-content a:hover {
+    color: var(--brand);
 }
 
-.rendered-content em {
+/* 5. MATERIALS & UPLOADS */
+.course-materials {
+    background-color: #f0f9fa; /* Light teal tint */
+    border: 1px solid #d0e7eb;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+    width: 100%;
+    text-align: left;
+}
+
+.course-materials h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+    color: var(--highlight);
+}
+
+.material-link {
+    color: var(--highlight);
+    font-weight: 700;
+    text-decoration: underline;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.material-link:hover { color: var(--brand); }
+
+/* Owner Upload Controls */
+.owner-upload-area {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #aecbcb;
+}
+
+.owner-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.btn-upload {
+    display: inline-block;
+    background-color: var(--white);
+    border: 2px dashed var(--highlight);
+    color: var(--highlight);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-upload:hover { background-color: #e6f4ff; border-style: solid; }
+
+/* 6. ACTION BUTTONS (Enroll / Update) */
+.hero-actions {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 2.5rem;    /* Space below the line */
+    padding-bottom: 2.5rem;   /* Space above the line */
+    border-bottom: 1px solid #eee;
+}
+
+.course-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ENROLL BUTTON (Crucial) === */
+.btn-enroll {
+    background-color: var(--action); /* Yellow */
+    color: var(--black);
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 0.9rem 3rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(254, 175, 0, 0.4);
+    transition: transform 0.2s;
+}
+
+.btn-enroll:hover {
+    transform: translateY(-2px);
+    background-color: #ffbe2e;
+}
+
+.enroll-hint {
+    font-size: 0.9rem;
+    color: var(--base-dark);
     font-style: italic;
 }
 
-.course-content-section {
-    margin-top: 2rem;
+/* Owner Buttons */
+.btn-update {
+    background-color: var(--highlight);
+    color: var(--white);
+    border: none;
+    border-radius: 999px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-update:hover { background-color: #005f63; }
+
+.btn-delete {
+    background-color: transparent;
+    border: 2px solid #ef4444;
+    color: #ef4444;
+    border-radius: 999px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-delete:hover { background-color: #ef4444; color: white; }
+
+/* 7. RATINGS & COMMENTS */
+.rating-section {
+    margin-top: 3rem;
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+    width: 100%;
+    text-align: center;
 }
 
-.brief-description-section {
-    margin-top: 1.5rem;
+.rate-controls {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 2rem;
+}
+
+.rate-controls button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #e5e7eb;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.rate-controls button:hover,
+.rate-controls button.active-star {
+    color: var(--action);
+}
+
+/* Divider Line */
+.divider {
+    border: 0;
+    border-top: 1px solid #eee; /* Subtle grey line */
+    margin: 3rem 0; /* Space above and below line */
+}
+
+/* Comments Section */
+.comments-section textarea {
+    width: 100%;
+    background-color: #f8fafc; /* Very light grey/blue */
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;       /* Soft rounded corners */
+    padding: 1rem;
+    font-family: var(--font-sourcesans);
+    font-size: 1rem;
+    color: var(--black);
+    transition: all 0.2s;
+    min-height: 100px; /* Give it some height by default */
+    resize: vertical;  /* Allow user to resize vertically only */
+}
+
+/* Focus State: Glow Teal when clicking inside */
+.comments-section textarea:focus {
+    outline: none;
+    border-color: var(--highlight);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(0, 124, 130, 0.1); /* Teal Glow */
+}
+
+.comments-section button[type="submit"],
+.comments-section .btn-submit { /* Fallback class name */
+    background-color: var(--highlight); /* Teal */
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 0.75rem;
+    
+    /* Pushes button to the right side */
+    display: block;
+    margin-left: auto; 
+    
+    transition: background-color 0.2s;
+}
+
+.comments-section button[type="submit"]:hover {
+    background-color: #005f63; /* Darker Teal */
+}
+
+/* 8. Comment List */
+.comment-list-spacer {
+    height: 3rem; 
+    border-bottom: 1px solid #f0f0f0; /* Subtle line separating form from list */
+    margin-bottom: 2rem;
+}
+
+/* The List Container */
+.comment-list {
+    list-style: none; /* Remove bullets */
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Individual Comment Card */
+.comment-item {
+    display: flex;
+    flex-direction: column; /* Stack Header on top of Text */
+    padding: 1.5rem 0;      /* Breathing room top/bottom */
+    border-bottom: 1px solid #f1f1f1; /* Divider line */
+}
+
+/* Remove border from the last comment */
+.comment-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Header Row (Name ------- Date) */
+.comment-header {
+    display: flex;
+    justify-content: space-between; /* Push Date to the far right */
+    align-items: center;
+    margin-bottom: 0.5rem; /* Space between Name and Body */
+}
+
+/* The Author Name */
+.comment-author {
+    font-family: var(--font-sourcesans);
+    font-weight: 700;       /* Bold */
+    font-size: 1.05rem;
+    color: var(--highlight); /* Teal color makes it stand out */
+}
+
+/* The Date */
+.comment-date {
+    font-size: 0.85rem;
+    color: #999; /* Light grey */
+    font-weight: 500;
+}
+
+/* The Message Body */
+.comment-text {
+    color: var(--base-dark);
+    line-height: 1.6;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Empty State Box (When no comments exist) */
+.empty-comments {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    background-color: #fcfcfc;
+    border-radius: 12px;
+    border: 1px dashed #e0e0e0;
+    margin-top: 1rem;
+}
+
+/* General Text Muted (Loading/Error) */
+.text-muted {
+    color: #888;
+    font-style: italic;
+    margin-top: 1rem;
 }
