@@ -2,6 +2,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/use-auth";
 import { ThumbsUp } from "lucide-react";
+import { Clock, Calendar, Users, CheckCircle, Star} from "lucide-react";
 import { categoryDisplay } from "../utils/category-display";
 
 // API Imports
@@ -23,6 +24,9 @@ import { isEnrolled as isEnrolledUtil } from "../utils/enrollment";
 import { isCompleted as isCompletedUtil, toggleCompleted as toggleCompletedUtil } from "../utils/completion";
 import "./CoursePage.css";
 import { enroll as enrollUtil, isFull as isFullUtil, getCount as getCountUtil } from "../utils/enrollment";
+
+// Css Imports
+import "./CoursePage.css"
 
 function CoursePage() {
     const navigate = useNavigate();
@@ -414,31 +418,30 @@ function CoursePage() {
                             <span className="enroll-hint">Enrollment closed</span>
                         )}
                     </div>
-                )}
 
-               {/* 9. Rating Section */}
-                <div className="rating-section">
-                    <h3><strong>Rate this course</strong></h3>
-                    {!isEnrolled ? (
-                        <p >Enroll to rate this course.</p>
-                    ) : (
-                        <div className="rate-controls" >
-                            {[1,2,3,4,5].map((n) => (
-                                <button
-                                    key={n}
-                                    type="button"
-                                    onClick={() => saveUserRating(n)}
-                                    aria-label={`Rate ${n} star${n>1? 's':''}`}
-                                >
-                                    ★
-                                </button>
-                            ))}
-                            {userRating > 0 && (
-                                <span>{userRating}.0</span>
+                    {/* Section: Community (Ratings & Comments) */}
+                    <div className="course-section interaction-section">                       
+                        {/* Rating Area */}
+                        <div className="rating-area">
+                            <h3>Rate this course</h3>
+                            {!isEnrolled ? (
+                                <p className="text-muted">Enroll to rate this course.</p>
+                            ) : (
+                                <div className="rate-controls">
+                                    {[1,2,3,4,5].map((n) => (
+                                        <button
+                                            key={n}
+                                            type="button"
+                                            onClick={() => saveUserRating(n)}
+                                            className={n <= userRating ? "active-star" : ""}
+                                        >★</button>
+                                    ))}
+                                    {userRating > 0 && <span>{userRating}.0</span>}
+                                </div>
                             )}
                         </div>
-                    )}
-                </div>
+
+                        <hr className="divider"/>
 
                {/* 10. Comments Section  */}
                 <div className="comments-section">

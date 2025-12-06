@@ -1,16 +1,21 @@
+import React from 'react';
+
 function CommentList({ comments, isLoading, error }) {
-    // 1. Loading state - show spinner
+    
+    // 1. Loading State
     if (isLoading) {
-        return <p>Loading comments...</p>;
+        return <p className="text-muted">Loading comments...</p>;
     }
-    // 2. Error state - show error message
+
+    // 2. Error State
     if (error) {
-        return <p>Error loading comments: {error.message}</p>;
+        return <p className="text-muted">Error loading comments.</p>;
     }
-    // 3. Empty state - show helpful message
+
+    // 3. Empty State (Uses the CSS class .empty-comments)
     if (!comments || comments.length === 0) {
         return (
-            <div>
+            <div className="empty-comments">
                 <p>No comments yet. Be the first!</p>
             </div>
         );
@@ -25,12 +30,10 @@ function CommentList({ comments, isLoading, error }) {
             day: "numeric",
             month: "short",
             year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
         }); 
     };
 
-    // 5. Main render - map over comments
+    // 5. Main render
     return (
         <div className="comment-list">
             <h3>Comments ({comments.length})</h3>
