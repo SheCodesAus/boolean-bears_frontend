@@ -15,11 +15,9 @@
     --base-light: #93893b;
     --base-dark: #643413;
     --black: #111111;
-    --olive:#938a3c;
-    --teal:#007c82;
+    --olive: #928b3b;
 
-    /* shared card height for course cards */
-    --card-height: 480px;
+    --card-height: 420px;
 
     /* padding */
     --padding-base: 8px;
@@ -41,7 +39,6 @@ body {
     line-height: 1.6;
     color: var(--black);
     background-color: #f7fafc;
-    /* soft neutral background */
 }
 
 /* Headings use your display font */
@@ -59,24 +56,21 @@ a { color: inherit; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 /* === Shared form layout ================================== */
-
 .form-page {
     display: flex;
     justify-content: center;
     padding: 3rem 1rem 4rem;
 }
-
 .form-card {
     width: 100%;
-    max-width: 720px;
-    background-color: #e6f4ff;
-    /* pale blue panel */
-    border-radius: 24px;
-    padding: 2.5rem 3rem;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    max-width: 1780px;
+    border-radius: 20px;
+    padding: 2.25rem 2.5rem;
+    box-shadow: 0 8px 30px rgba(2,6,23,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    /* Nudge the form card slightly to the right for visual offset */
+    transform: translateX(10px);
 }
-
-/* Headings inside form cards */
 .form-card h1,
 .form-card h2 {
     margin-top: 0;
@@ -116,6 +110,15 @@ a:hover { text-decoration: underline; }
 .form-field select:focus {
     outline: 2px solid var(--highlight);
     border-color: var(--highlight);
+}
+
+/* ---- Page-specific form styles moved from component CSS ---- */
+
+
+@media (max-width: 900px) {
+    .create-course-form { width: calc(100% - 2rem); padding:1rem; }
+    .create-course-form .row { grid-template-columns: 1fr; }
+    .create-course-form .tiptap { min-height:240px; }
 }
 
 /* Actions row */
@@ -169,5 +172,7 @@ a:hover { text-decoration: underline; }
 
     .form-card {
         padding: 2rem 1.5rem;
+        /* remove horizontal nudge on small screens */
+        transform: none;
     }
 }

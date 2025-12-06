@@ -1,6 +1,6 @@
 /* Main bar */
 #navbar {
-    background-color: var(--teal);
+    background-color: var(--highlight);
     color: var(--white);
     padding: 0.6rem 2rem;
     display: flex;
