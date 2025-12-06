@@ -35,29 +35,34 @@ function CommentList({ comments, isLoading, error }) {
 
     // 5. Main render
     return (
-        <ul className="comment-list">
-            {comments.map((comment) => (
-                <li key={comment.id} className="comment-item">
-                    
-                    {/* Header: Name & Date */}
-                    <div className="comment-header">
-                        {/* Checked: using 'commenter' || 'author' to be safe */}
-                        <span className="comment-author">
-                            {comment.commenter || comment.author || "Anonymous"}
-                        </span>
-                        
-                        <span className="comment-date">
-                            {formatDate(comment.date_created || comment.created_at)}
-                        </span>
+        <div className="comment-list">
+            <h3>Comments ({comments.length})</h3>
+            {comments.map((comment) => {
+                const username = comment.author || comment.username || "Anonymous";
+                const rating = comment.rating ?? comment.user_rating; // optional
+                const avatarSrc = comment.avatar_url || "/avatar-default.svg";
+                return (
+                    <div key={comment.id ?? `${username}-${comment.created_at ?? Math.random()}`} className="comment-item" style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: "12px", alignItems: "start", padding: "12px 0", borderBottom: "1px solid #eee" }}>
+                        <img src={avatarSrc} alt="avatar" width={48} height={48} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                        <div>
+                            <div className="comment-header" style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                                <span className="comment-auth" style={{ fontWeight: 600 }}>{username}</span>
+                                {rating != null && (
+                                    <span className="comment-rating" title="User rating" style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: "#928b3b" }}>
+                                        <span style={{ fontSize: "16px" }}>⭐</span>
+                                        <span>{Number(rating).toFixed(1)}</span>
+                                    </span>
+                                )}
+                                <span className="comment-date" style={{ color: "#6b7280" }}>{formatDate(comment.created_at)}</span>
+                            </div>
+                            <div className="comment-content">
+                                <p style={{ margin: 0 }}>{comment.content}</p>
+                            </div>
+                        </div>
                     </div>
-
-                    {/* Checked: using 'body' || 'content' to be safe */}
-                    <p className="comment-text">
-                        {comment.body || comment.content}
-                    </p>
-                </li>
-            ))}
-        </ul>
+                );
+            })}
+        </div>
     );
 }
 

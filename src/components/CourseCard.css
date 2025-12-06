@@ -12,7 +12,7 @@
   text-align: center;
   transition: transform 160ms ease, box-shadow 160ms ease;
   height: 100%;
-  min-height: 450px; /* slightly larger to accommodate new rows */
+  min-height: var(--card-height); /* use shared card height */
 }
 
 .course-card:hover {
@@ -31,7 +31,7 @@
 
 .course-image {
   width: 100%;
-  height: 160px;
+  height: 220px;
   object-fit: cover;
   border-radius: 12px;
   margin: 8px 0 10px;
@@ -95,9 +95,16 @@
 }
 
 @media (max-width: 768px) {
-  .course-card { min-height:auto; }
+  .course-card { min-height: 420px; }
   .card-title { -webkit-line-clamp: 2; height: 2.6rem; line-height: 1.3; }
   .brief { -webkit-line-clamp: 3; height: 4.2rem; }
+}
+
+/* Ensure consistent height on Featured and All Courses grids */
+.featured-list .course-card,
+#course-list .course-card {
+  height: 100%;
+  min-height: var(--card-height);
 }
 
 /* Keep these classes present but use neutral grey background so all categories match */
@@ -153,10 +160,16 @@
   margin: 6px 0 8px;
   color: #667085;
   font-size: 0.9rem;
-  min-height: 22px; /* reserve space so cards align even if missing fields */
+  min-height: 32px; /* reserve space (enough for Completed badge) so briefs align */
 }
 
 .meta-item { white-space: nowrap; }
+.meta-item.completed { color: var(--highlight); font-weight: 600; }
+
+/* Placeholder keeps same visual space but hidden for cards without a value */
+.meta-item.placeholder { visibility: hidden; }
+
+.completion-row { margin: 8px 0; }
 
 .social-row {
   display: flex;
@@ -165,6 +178,7 @@
   width: 100%;
   color: #444;
   min-height: 22px; /* reserve space for alignment */
+  margin-top: auto; /* pin social row to bottom to match first card */
 }
 
 .cta-row {

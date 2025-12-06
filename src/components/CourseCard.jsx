@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth"
 import { enroll, isEnrolled, isFull, getCount } from "../utils/enrollment";
+import { isCompleted as isCompletedUtil } from "../utils/completion";
 import "./CourseCard.css";
 import categoryImages from "../utils/category-images";
 import { categoryDisplay } from "../utils/category-display";
@@ -18,6 +19,7 @@ function CourseCard(props) {
     const maxStudents = Number(courseData?.max_students ?? courseData?.capacity ?? 0) || null;
     const enrolledCount = getCount(courseId);
     const youAreEnrolled = isEnrolled(courseId, auth?.username);
+    const youCompleted = isCompletedUtil(auth?.username, courseId);
     const isOwner = auth?.username && courseData?.owner && String(auth.username) === String(courseData.owner);
     const courseIsFull = isFull(courseId, maxStudents);
     // Enrollment end: accept ISO strings or date-like strings
@@ -117,18 +119,33 @@ function CourseCard(props) {
 
             {/* METADATA ROW (duration + enrolment end + max students) */}
             <div className="meta-row">
-                {durationHours && (
-                    <span className="meta-item" aria-label="Duration">⏱️ {durationHours}h</span>
-                )}
-                {enrolByText && (
-                    <span className="meta-item" aria-label="Enrollment closes">📅 Enrollment closes {enrolByText}</span>
-                )}
-                {typeof maxStudents === 'number' && maxStudents > 0 && (
-                    <span className="meta-item" aria-label="Max students">👤 Max {maxStudents}</span>
-                )}
-                {youAreEnrolled && (
-                    <span className="meta-item enrolled" aria-label="Enrolled">✅ Enrolled</span>
-                )}
+                {/* duration: show placeholder when missing */}
+                <span className={`meta-item ${durationHours ? '' : 'placeholder'}`} aria-label="Duration">
+                    {durationHours ? `⏱️ ${durationHours}h` : '⏱️ 0h'}
+                </span>
+
+                {/* enrol by date: show placeholder when missing */}
+                <span className={`meta-item ${enrolByText ? '' : 'placeholder'}`} aria-label="Enrollment closes">
+                    {enrolByText ? `📅 Enrollment closes ${enrolByText}` : '📅 Enrollment closes —'}
+                </span>
+
+                {/* max students: show placeholder when missing */}
+                <span className={`meta-item ${typeof maxStudents === 'number' && maxStudents > 0 ? '' : 'placeholder'}`} aria-label="Max students">
+                    {typeof maxStudents === 'number' && maxStudents > 0 ? `👤 Max ${maxStudents}` : '👤 Max —'}
+                </span>
+
+                {/* enrolled indicator: keep placeholder so layout is consistent */}
+                <span className={`meta-item enrolled ${youAreEnrolled ? '' : 'placeholder'}`} aria-hidden={!youAreEnrolled}>
+                    {youAreEnrolled ? '✅ Enrolled' : '✅ Enrolled'}
+                </span>
+
+                {/* completed indicator: keep placeholder so layout is consistent */}
+                <span
+                    className={`meta-item completed ${youCompleted ? '' : 'placeholder'}`}
+                    aria-hidden={!youCompleted}
+                >
+                    {youCompleted ? '🏁 Completed' : '🏁 Completed'}
+                </span>
             </div>
 
             {/* BRIEF DESCRIPTION */}
