@@ -20,21 +20,25 @@ function LandingPage() {
         <div className="landing-root">
         {/* Hero */}
         <section className="hero">
+            <div className="hero-content">
             <div className="hero-text">
-            <div className="hero-eyebrow">Yarning Circles · Boolean Bears</div>
-            <h1>Learn together, in circle.</h1>
-            <p>
+            <div className="hero-eyebrow">Yarning Circles</div>
+            <h1>Sharing, Learning & Respectful Conversations</h1>
+            {/* <p>
                 A peer-led platform for accessible, written courses where everyone can
                 contribute, connect, and grow. Built with community and inclusivity at heart.
-            </p>
-            <div className="hero-actions">
+            </p> */}
+            {/* <div className="hero-actions">
                 <button className="btn primary" onClick={() => navigate("/courses")}>Browse Courses</button>
+            </div> */}
             </div>
             </div>
             <div className="hero-art" aria-hidden>
             <img src={logoUrl} alt="Yarning Circles" className="hero-logo" />
             </div>
         </section>
+
+        
 
         {/* Mission */}
         <section className="mission">

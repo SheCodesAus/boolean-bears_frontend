@@ -2,7 +2,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/use-auth";
 import { ThumbsUp } from "lucide-react";
-import { Clock, Calendar, Users, CheckCircle, Star} from "lucide-react";
+import { Clock, Calendar, Users, CheckCircle, Star, MessageCircle } from "lucide-react";
 import { categoryDisplay } from "../utils/category-display";
 
 // API Imports
@@ -247,8 +247,8 @@ function CoursePage() {
     return (
     <div className="course-page">
         {/* Udemy-style hero */}
-        <section className="course-hero">
-            <div className="hero-media">
+        <section className="course-header-section">
+            <div className="course-header">
                 <img 
                     src={categoryImages[course.category] || categoryImages["other"]} 
                     className="hero-image"
@@ -257,17 +257,62 @@ function CoursePage() {
             </div>
             <div className="hero-overlay">
                 <h1 className="hero-title">{course.title}</h1>
+                <div className="hero-category-owner">
+                    <span className="category-badge">{categoryDisplay[course.category] || course.category}</span>
+                    <div className="owner">By {course.owner}</div>
+                    <div className="hero-meta-line">
+                        <span className="meta-item duration">
+                            <Clock className="icon" />
+                            {(() => {
+                                const durRaw = course?.duration_in_hours ?? course?.duration;
+                                const dur = Number(durRaw);
+                                return Number.isFinite(dur) && dur > 0 ? `${dur}h` : '—';
+                            })()}
+                        </span>
+                        <span className="meta-item rating">
+                            <Star className="icon" />
+                            {averageRating != null ? averageRating.toFixed(1) : '—'}
+                        </span>
+                        <span className="meta-item comments">
+                            <MessageCircle className="icon" />
+                            {typeof commentsCount === 'number' ? commentsCount : '—'}
+                        </span>
+                        <span className="meta-item like-inline">
+                            <button
+                                className="like-button-inline"
+                                onClick={incrementLikes}
+                                aria-label="Like this course"
+                                disabled={hasLiked || liking}
+                                title={hasLiked ? "You already liked this course" : "Like this course"}
+                            >
+                                <ThumbsUp />
+                            </button>
+                            <span className="likes-count-inline">{likes}</span>
+                        </span>
+                    </div>
+                </div>
                 <div className="hero-stats">
-                    {(() => {
-                        const durRaw = course?.duration_in_hours ?? course?.duration;
-                        const dur = Number(durRaw);
-                        return Number.isFinite(dur) && dur > 0 ? (
-                            <span className="stat">⏱️ {dur}h</span>
-                        ) : null;
-                    })()}
-                    {/* Rating removed from hero overlay */}
+                    {/* Duration moved to the meta line below the title */}
                     {completed && <span className="stat completed">🏁 Completed</span>}
                 </div>
+                {isOwner && (
+                    <div className="hero-owner-actions">
+                        <button
+                            type="button"
+                            className="btn-update"
+                            onClick={handleUpdateClick}
+                        >
+                            Update Course
+                        </button>
+                        <button
+                            type="button"
+                            className="btn-delete"
+                            onClick={handleDeleteClick}
+                        >
+                            Delete Course
+                        </button>
+                    </div>
+                )}
                 <div className="hero-actions">
                     {!isOwner && !isEnrolled && (
                         <button className="btn-primary" onClick={() => {
@@ -282,25 +327,7 @@ function CoursePage() {
                 </div>
             </div>
         </section>
-        {/* Category badge below the image, matching Courses page style, with right-aligned like + rating */}
-        <div className="category-row">
-            <span className="category-badge">{categoryDisplay[course.category] || course.category}</span>
-            <div className="category-like-control">
-                <span className="likes-count-inline">{likes}</span>
-                <button
-                    className="like-button-inline"
-                    onClick={incrementLikes}
-                    aria-label="Like this course"
-                    disabled={hasLiked || liking}
-                    title={hasLiked ? "You already liked this course" : "Like this course"}
-                >
-                    <ThumbsUp />
-                </button>
-                {averageRating != null && (
-                    <span className="rating-inline" aria-label="Average rating">⭐ {averageRating.toFixed(1)}</span>
-                )}
-            </div>
-        </div>
+        {/* likes/rating moved into hero meta line above; removed duplicate control */}
         {/* What You Will Learn heading and content */}
         <div className="brief-description-section">
             <h3><strong>What You Will Learn</strong></h3>
@@ -363,23 +390,7 @@ function CoursePage() {
                     </button>
                 </div>
 
-                {/* To display uploaded files ends */}
-                {isOwner && (
-                    <div className="course-actions">
-                        <button 
-                            className="btn-update"
-                            onClick={handleUpdateClick}
-                        >
-                            Update Course
-                        </button>
-                        <button
-                            className="btn-delete"
-                            onClick={handleDeleteClick}
-                        >
-                            Delete Course
-                        </button>
-                    </div>
-                )}
+                {/* To display uploaded files ends (owner controls moved to hero) */}
 
                 {/* Enroll action */}
                 {!isOwner && !isEnrolled && (
@@ -418,8 +429,9 @@ function CoursePage() {
                             <span className="enroll-hint">Enrollment closed</span>
                         )}
                     </div>
-
-                    {/* Section: Community (Ratings & Comments) */}
+                    )}
+    
+                        {/* Section: Community (Ratings & Comments) */}
                     <div className="course-section interaction-section">                       
                         {/* Rating Area */}
                         <div className="rating-area">
@@ -458,8 +470,10 @@ function CoursePage() {
                         onCommentAdded={handleCommentAdded}
                     />
                 </div>
-            </div>
         </div>
+        
+        </div>
+    </div>
     );
 }
 

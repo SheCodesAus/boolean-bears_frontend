@@ -1,7 +1,7 @@
 import useCourses from "../hooks/use-courses";
 import CourseCard from "../components/CourseCard";
 import useFeaturedCourses from "../hooks/use-featured-courses";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import "./HomePage.css";
 
 function HomePage() {
@@ -12,6 +12,9 @@ function HomePage() {
     const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState({ categories: [], levels: [], durationMin: "", durationMax: "" });
     const featuredTrackRef = useRef(null);
+
+    // Dynamically sync card height to the tallest rendered card (e.g., first one)
+    // Moved below sortedCourses declaration to avoid TDZ errors.
 
     // Helper function to get course ID
     const getId = (item) => {
@@ -136,6 +139,31 @@ function HomePage() {
 
         return list;
     }, [filteredCourses, sortBy]);
+
+    // Dynamically sync card height to the tallest rendered card
+    useEffect(() => {
+        const measureAndSetHeight = () => {
+            const featuredCards = document.querySelectorAll('.featured-list .course-card');
+            const allCards = document.querySelectorAll('#course-list .course-card');
+            let maxH = 0;
+            [...featuredCards, ...allCards].forEach((el) => {
+                if (el) {
+                    const h = el.getBoundingClientRect().height;
+                    if (h > maxH) maxH = h;
+                }
+            });
+            if (maxH > 0) {
+                document.documentElement.style.setProperty('--card-height', `${Math.ceil(maxH)}px`);
+            }
+        };
+
+        const t = setTimeout(measureAndSetHeight, 50);
+        window.addEventListener('resize', measureAndSetHeight);
+        return () => {
+            clearTimeout(t);
+            window.removeEventListener('resize', measureAndSetHeight);
+        };
+    }, [featured, sortedCourses]);
 
     const scrollFeatured = (dir) => {
         const el = featuredTrackRef.current;

@@ -18,6 +18,9 @@
     --olive:#938a3c;
     --teal:#004542;
 
+    /* shared card height for course cards */
+    --card-height: 480px;
+
     /* padding */
     --padding-base: 8px;
     --padding-medium: calc(var(--padding-base)*2);

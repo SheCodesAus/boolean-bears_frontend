@@ -33,7 +33,7 @@ const teamMembers = [
         linkedin: "https://www.linkedin.com/in/jessica-keating/",
     },
     {
-        name: "Qin Shen",
+        name: "Qin Shen 申勤",
         role: "Full Stack Developer & User Flow Architect",
         image: qinImg,
         bio: "Qin blends full-stack engineering with user-flow architecture, using her systems mindset and sharp problem-solving skills to turn complex interactions into smooth, intuitive product journeys.",

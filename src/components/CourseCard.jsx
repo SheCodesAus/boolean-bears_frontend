@@ -119,21 +119,33 @@ function CourseCard(props) {
 
             {/* METADATA ROW (duration + enrolment end + max students) */}
             <div className="meta-row">
-                {durationHours && (
-                    <span className="meta-item" aria-label="Duration">⏱️ {durationHours}h</span>
-                )}
-                {enrolByText && (
-                    <span className="meta-item" aria-label="Enrollment closes">📅 Enrollment closes {enrolByText}</span>
-                )}
-                {typeof maxStudents === 'number' && maxStudents > 0 && (
-                    <span className="meta-item" aria-label="Max students">👤 Max {maxStudents}</span>
-                )}
-                {youAreEnrolled && (
-                    <span className="meta-item enrolled" aria-label="Enrolled">✅ Enrolled</span>
-                )}
-                {youCompleted && (
-                    <span className="meta-item completed" aria-label="Completed">🏁 Completed</span>
-                )}
+                {/* duration: show placeholder when missing */}
+                <span className={`meta-item ${durationHours ? '' : 'placeholder'}`} aria-label="Duration">
+                    {durationHours ? `⏱️ ${durationHours}h` : '⏱️ 0h'}
+                </span>
+
+                {/* enrol by date: show placeholder when missing */}
+                <span className={`meta-item ${enrolByText ? '' : 'placeholder'}`} aria-label="Enrollment closes">
+                    {enrolByText ? `📅 Enrollment closes ${enrolByText}` : '📅 Enrollment closes —'}
+                </span>
+
+                {/* max students: show placeholder when missing */}
+                <span className={`meta-item ${typeof maxStudents === 'number' && maxStudents > 0 ? '' : 'placeholder'}`} aria-label="Max students">
+                    {typeof maxStudents === 'number' && maxStudents > 0 ? `👤 Max ${maxStudents}` : '👤 Max —'}
+                </span>
+
+                {/* enrolled indicator: keep placeholder so layout is consistent */}
+                <span className={`meta-item enrolled ${youAreEnrolled ? '' : 'placeholder'}`} aria-hidden={!youAreEnrolled}>
+                    {youAreEnrolled ? '✅ Enrolled' : '✅ Enrolled'}
+                </span>
+
+                {/* completed indicator: keep placeholder so layout is consistent */}
+                <span
+                    className={`meta-item completed ${youCompleted ? '' : 'placeholder'}`}
+                    aria-hidden={!youCompleted}
+                >
+                    {youCompleted ? '🏁 Completed' : '🏁 Completed'}
+                </span>
             </div>
 
             {/* BRIEF DESCRIPTION */}

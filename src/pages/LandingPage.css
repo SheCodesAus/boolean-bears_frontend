@@ -19,8 +19,18 @@ padding: 2rem 1rem 4rem;
 .hero {
 display: grid;
 grid-template-columns: 1fr;
-align-items: center;
 gap: 1.5rem;
+}
+
+/* Vertically center hero columns so text matches logo height */
+.hero { align-items: center; }
+
+/* Ensure the standalone hero button block aligns to the left edge */
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  justify-content: flex-start; /* left-align contents inside the flex row */
 }
 
 @media (min-width: 768px) {
@@ -28,21 +38,33 @@ gap: 1.5rem;
 }
 
 .hero-eyebrow {
-font-size: 1.5rem;
-color: #8b5e3c; /* brown accent inspired by logo */
-letter-spacing: 0.04em;
-font-weight: 600;
-text-transform: uppercase;
+  font-size: clamp(2.4rem, 6vw, 5.8rem); /* larger, responsive eyebrow */
+  color: #8b5e3c; /* brown accent inspired by logo */
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hero-text {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* center text vertically to match logo */
 }
 
 .hero-text h1 {
-margin: 0.25rem 0 0.5rem;
-font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0.25rem 0 0.rem;
+  font-size: clamp(2.6rem, 7vw, 3rem); /* scale up to match logo height on wider screens */
+  line-height: 0.95;
+  font-weight: 800;
 }
 
 .hero-text p { margin: 0 0 1rem; color: #333; }
+/* Left-align hero text and actions to match Yarning Circles eyebrow */
+.hero-text { text-align: left; }
 
-.hero-actions { display: flex; gap: 0.75rem; margin-bottom: 0.5rem; }
+.hero-actions { display: flex; gap: 0.75rem; margin-bottom: 0.5rem; justify-content: flex-start; align-items: flex-start; }
+.hero-text .hero-actions { justify-content: flex-start; align-items: flex-start; text-align: left; }
 .hero-quick { display: flex; gap: 1rem; }
 
 .btn { padding: 0.6rem 1rem; border-radius: 10px; border: 1px solid transparent; cursor: pointer; transition: background .15s ease, color .15s ease, border-color .15s ease; }
@@ -57,7 +79,7 @@ font-size: clamp(2rem, 4vw, 3rem);
 .link { display: inline-flex; align-items: center; gap: 0.4rem; color: #245b9a; background: transparent; border: none; padding: 0; cursor: pointer; }
 
 .hero-art { display: grid; place-items: center; }
-.hero-logo { width: 100%; max-width: 320px; height: auto; }
+.hero-logo { width: auto; max-width: 380px; max-height: 420px; height: auto; }
 
 .mission { background: #f7fafc; border: 1px solid #eee; border-radius: 12px; padding: 1rem; }
 .mission h2 { margin: 0 0 0.5rem; }

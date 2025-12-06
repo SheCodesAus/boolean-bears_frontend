@@ -70,7 +70,7 @@ function CommentForm({ courseId, onCommentAdded }) {
                 style={{ width: "100%" }}
             />
 
-            <button type="submit" disabled={loading || !comment.trim()} style={{ alignSelf: "flex-start" }}>
+            <button type="submit" disabled={loading || !comment.trim()} className="btn-post-comment">
                 {loading ? "Posting...": "Post Comment"}
             </button>
         </form>
