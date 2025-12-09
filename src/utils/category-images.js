@@ -13,7 +13,7 @@ const categoryImages = {
     "arts and crafts": artsCrafts,
     "reading and writing": readingWriting,
     "music and musical instruments": music,
-    "language learning": language,
+    "languages": language,
     "health and wellness": health,
     "business and finance": business,
     "personal development": personalDev,
