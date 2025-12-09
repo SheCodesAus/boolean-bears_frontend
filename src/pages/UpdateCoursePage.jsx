@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useCourse from "../hooks/use-course";
 import { useAuth } from "../hooks/use-auth";
 import UpdateCourseForm from "../components/UpdateCourseForm";
+import "./UpdateCoursePage.css";
 
 function UpdateCoursePage () {
     const { id } = useParams();

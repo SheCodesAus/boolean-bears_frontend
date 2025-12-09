@@ -8,13 +8,18 @@
 
 :root {
     /* colour */
-    --brand: #fc6055;
+    --brand: #ff4334;
     --action: #feaf00;
     --highlight: #007c82;
     --white: #ffffff;
-    --base-light: #c5bc7b;
+    --base-light: #93893b;
     --base-dark: #643413;
     --black: #111111;
+    --olive:#938a3c;
+    --teal:#007c82;
+
+    /* shared card height for course cards */
+    --card-height: 480px;
 
     /* padding */
     --padding-base: 8px;
