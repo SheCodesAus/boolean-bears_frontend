@@ -129,10 +129,7 @@ function CourseCard(props) {
                     {enrolByText ? `📅 Enrollment closes ${enrolByText}` : '📅 Enrollment closes —'}
                 </span>
 
-                {/* max students: show placeholder when missing */}
-                <span className={`meta-item ${typeof maxStudents === 'number' && maxStudents > 0 ? '' : 'placeholder'}`} aria-label="Max students">
-                    {typeof maxStudents === 'number' && maxStudents > 0 ? `👤 Max ${maxStudents}` : '👤 Max —'}
-                </span>
+                {/* Removed max students display to keep meta concise */}
 
                 {/* enrolled indicator: keep placeholder so layout is consistent */}
                 <span className={`meta-item enrolled ${youAreEnrolled ? '' : 'placeholder'}`} aria-hidden={!youAreEnrolled}>

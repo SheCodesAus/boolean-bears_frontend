@@ -1,5 +1,5 @@
 .mission {
-  background-color: var(--teal);
+  background-color: var(--highlight);
   border: 1px solid #e6e8eb;
   border-radius: 12px;
   padding: 16px;
@@ -143,11 +143,11 @@ gap: 1.5rem;
 .pillars .pillar-reciprocity { background: var(--circle-4); color: #ffffff; }
 .pillars .pillar-responsibility { background: var(--circle-1); color: #ffffff; }
 
-.cta { display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: center; gap: 1rem; padding: 1.25rem; border: 1px solid #e5e7eb; border-radius: 16px; background: linear-gradient(135deg, #feaf00 0%, #fff 45%, #e6f0ff 100%); }
-.cta h2 { margin: 0.25rem 0; font-size: clamp(1.6rem, 3vw, 2rem); }
+.cta { display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: center; gap: 1rem; padding: 1.25rem; border-radius: 16px; background-color: var(--highlight); border: 1px solid rgba(0,0,0,0.04); }
+.cta h2 { margin: 0.25rem 0; font-size: clamp(1.6rem, 3vw, 2rem); color: var(--white); }
 .cta-eyebrow { font-size: 0.9rem; color: #8b5e3c; text-transform: uppercase; letter-spacing: 0.05em; }
 .cta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: flex-end; }
-.cta-primary { padding: 0.7rem 1.1rem; border-radius: 12px; border: 1px solid var(--highlight); background: var(--action); color: var(--black); font-weight: 700; cursor: pointer; box-shadow: 0 6px 14px rgba(0,0,0,0.1); }
+.cta-primary { padding: 0.7rem 1.1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.06); background: var(--action); color: var(--black); font-weight: 700; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
 .cta-primary:hover { background: var(--brand); border-color: var(--brand); color: var(--white); }
 .cta-secondary { padding: 0.7rem 1.1rem; border-radius: 12px; border: 1px solid var(--action); background: var(--white); color: var(--highlight); font-weight: 700; cursor: pointer; }
 .cta-secondary:hover { background: var(--brand); border-color: var(--brand); color: var(--white); }

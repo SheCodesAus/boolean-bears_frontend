@@ -1,40 +1,34 @@
-/* Only styles the create course form */
-.create-course-form {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: var(--padding-medium);
-    word-wrap: break-word;
-}
 
-/* Tiptap editor styling */
+/* Two-column helper for grouped fields inside form pages */
+.create-course-form .row,
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.create-course-form .row.full { grid-template-columns: 1fr; }
+
+.create-course-form .form-field { display:flex; flex-direction:column; gap:8px; }
+.create-course-form label { font-weight:700; color: var(--highlight); }
+
+/* Tiptap editor area styling (form-specific) */
 .create-course-form .tiptap {
-    max-width: 100%;
-    min-height: 200px;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    background-color: var(--white);
-}
-
-.create-course-form .tiptap p {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    margin: 0.5rem 0;
-}
-
-.create-course-form .tiptap:focus {
-    outline: 2px solid var(--highlight);
-    border-color: var(--highlight);
-}
-
-/* Form inputs */
-form input,
-form select,
-form textarea {
-    max-width: 100%;
-    word-wrap: break-word;
+    width:100%;
+    min-height: 380px;
+    padding: 0.85rem;
+    border: 1px solid #e6eef0;
+    border-radius: 12px;
+    background: #fff;
     box-sizing: border-box;
 }
+.create-course-form .tiptap:focus { border-color: rgba(0,124,130,0.9); }
+
+/* File uploader controls for form pages */
+.file-uploader { border: 1px dashed #e6eef0; padding:12px; border-radius:8px; background:#fbfeff; }
+.file-input-label { display:inline-block; padding:8px 12px; border-radius:8px; background:var(--highlight); color:#fff; font-weight:700; cursor:pointer; }
+
+/* Reuse global action styles but tweak alignment inside form pages */
+.create-course-form .form-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:1rem; }
+
+/* Small helper text */
+.create-course-form .hint { font-size:0.9rem; color:#6b7280; }

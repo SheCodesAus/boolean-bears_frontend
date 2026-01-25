@@ -1,7 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/use-auth.js";
 import "./NavBar.css";
-import logoUrl from "../../img/yarningcircles_logo_transparent.png";
+import logoUrl from "../../img/Logo.png";
 
 function NavBar() {
     const {auth, setAuth} = useAuth();
@@ -20,6 +20,7 @@ function NavBar() {
         </Link>
 
         <Link to="/about">About</Link>
+        <Link to="/contact">Contact</Link>
         <Link to="/courses">Courses</Link>
 
         <Link to="/createcourse">Create A Course</Link>

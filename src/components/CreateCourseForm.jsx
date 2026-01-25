@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postCreateCourse from "../api/post-createcourse.js";
 import postCreateImageURL from "../api/post-createimageurl.js";
-
 import { useAuth } from "../hooks/use-auth.js";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -394,10 +393,10 @@ function CreateCourseForm() {
 
         <div className="file-uploader">
             <div className="upload-section">
-                <h2>Upload Files to S3</h2>
+                <h2>Upload Files</h2>
                 <p className="upload-description">
                 Upload images, videos, and PDFs to S3 storage. 
-                <br />Supported: JPEG/PNG (15MB max), MP4/MOV (500MB max), PDF (50MB max)
+                <br />Supported files: JPEG/PNG (15MB max), MP4/MOV (500MB max), PDF (50MB max)
                 </p>
 
                 <div className="file-input-container">
@@ -408,8 +407,10 @@ function CreateCourseForm() {
                     onChange={handleFileSelect}
                     disabled={isUploading}
                     className="file-input"
+                    style={{ display: 'none' }}
                 />
-                <label htmlFor="file-input" className={`file-input-label ${isUploading ? 'disabled' : ''}`}>
+
+                <label htmlFor="file-input" className={`primary-btn choose-file-btn`}>
                     Choose File
                 </label>
                 </div>
@@ -430,7 +431,7 @@ function CreateCourseForm() {
                     type="button"
                     onClick={handleUpload}
                     disabled={isUploading}
-                    className={`upload-button ${isUploading ? 'uploading' : ''}`}
+                    className={`primary-btn upload-btn ${isUploading ? 'uploading' : ''}`}
                     >
                     {isUploading ? 'Uploading...' : 'Upload File'}
                     </button>
