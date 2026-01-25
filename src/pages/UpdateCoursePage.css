@@ -1,0 +1,147 @@
+/* 1. PAGE CONTAINER */
+.update-course-page {
+    max-width: 800px;
+    margin: 3rem auto 5rem;
+    padding: 0 1rem;
+}
+
+.update-course-page h2 {
+    font-family: var(--font-playfair);
+    font-size: 2.5rem;
+    color: var(--black);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Success Message */
+.success-message {
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    border: 1px solid #a7f3d0;
+}
+
+/* 2. THE FORM CARD */
+.update-course-form {
+    background-color: var(--white);
+    padding: 2.5rem 3rem;
+    border-radius: 24px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Error Message inside form */
+.error-message {
+    background-color: #fee2e2;
+    color: #991b1b;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid #fecaca;
+}
+
+/* 3. INPUT FIELDS */
+.update-course-form label {
+    display: block;
+    font-family: var(--font-sourcesans);
+    font-weight: 700;
+    color: var(--black); /* Brown/Dark Grey */
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.update-course-form input[type="text"],
+.update-course-form input[type="number"],
+.update-course-form select,
+.update-course-form textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-family: var(--font-sourcesans);
+    font-size: 1rem;
+    border: 1px solid #d0d7de; /* Subtle grey border */
+    border-radius: 10px;
+    background-color: #fcfcfc;
+    transition: all 0.2s ease;
+    box-sizing: border-box; /* Prevents padding from breaking width */
+}
+
+/* Focus State (Teal Glow) */
+.update-course-form input:focus,
+.update-course-form select:focus,
+.update-course-form textarea:focus {
+    outline: none;
+    border-color: var(--highlight);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(0, 124, 130, 0.1); 
+}
+
+/* Character Counter Text */
+.char-count {
+    display: block;
+    text-align: right;
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 0.3rem;
+}
+
+/* 4. TIPTAP EDITOR STYLING */
+/* The container Tiptap creates */
+.ProseMirror {
+    min-height: 200px;
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #fcfcfc;
+    font-family: var(--font-sourcesans);
+    line-height: 1.6;
+    color: var(--black);
+}
+
+.ProseMirror:focus {
+    outline: none;
+    border-color: var(--highlight);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(0, 124, 130, 0.1); 
+}
+
+/* Paragraph spacing inside the editor */
+.ProseMirror p {
+    margin-bottom: 0.8rem;
+}
+
+/* 5. BUTTONS */
+.update-course-form button[type="submit"] {
+    margin-top: 1rem;
+    background-color: var(--action); /* Yellow */
+    color: var(--black);
+    font-family: var(--font-sourcesans);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%; /* Full width button */
+}
+
+.update-course-form button[type="submit"]:hover:not(:disabled) {
+    background-color: #ffbe2e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(254, 175, 0, 0.3);
+}
+
+.update-course-form button[type="submit"]:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}

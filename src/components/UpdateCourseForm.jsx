@@ -129,7 +129,7 @@ function UpdateCourseForm({ existingData, setUpdateMessage }) {
                     <option value="arts and crafts">Arts and Crafts</option>
                     <option value="reading and writing">Reading and Writing</option>
                     <option value="music and musical instruments">Music and Musical Instruments</option>
-                    <option value="language learning">Language Learning</option>
+                    <option value="languages">Languages</option>
                     <option value="health and wellness">Health and Wellness</option>
                     <option value="business and finance">Business and Finance</option>
                     <option value="personal development">Personal Development</option>

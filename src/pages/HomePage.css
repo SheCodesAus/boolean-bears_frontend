@@ -10,7 +10,19 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-auto-rows: 1fr; /* make each grid row cells equal height so cards stretch */
+  align-items: stretch; /* ensure cards fill the grid cell height */
   gap: 16px;
+}
+
+/* All Courses: render circular thumbnails consistently */
+#course-list .course-image {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  margin: 8px auto 10px; /* center inside card */
 }
 
 .all-courses-section h2 {
@@ -43,6 +55,72 @@
   margin-left: auto; /* push to right side */
 }
 
+/* Filter toggle button */
+.filter-toggle-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  background: linear-gradient(#fff, #fbfbfc);
+  cursor: pointer;
+  color: #0b1f34;
+  box-shadow: 0 1px 2px rgba(27, 31, 35, 0.06);
+  transition: background 160ms ease, box-shadow 160ms ease, transform 80ms ease;
+}
+.filter-toggle-btn:hover { background: #f6f8fa; box-shadow: 0 2px 6px rgba(27,31,35,0.08); }
+.filter-toggle-btn:active { transform: translateY(1px); }
+
+/* Dropdown filter panel */
+.filter-panel {
+  margin: 8px 0 16px;
+  padding: 16px;
+  border: 1px solid #d0d7de;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(2, 22, 44, 0.06);
+}
+.filter-section { margin-bottom: 16px; }
+.filter-label { font-weight: 700; margin-bottom: 8px; color: #0b1f34; }
+.filter-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.filter-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #e1e6eb;
+  border-radius: 18px;
+  background: linear-gradient(#fff, #fbfbfc);
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+.filter-option:hover { box-shadow: 0 2px 8px rgba(2, 22, 44, 0.08); border-color: #d0d7de; }
+.filter-empty { color: #6e7781; font-style: italic; }
+
+.filter-duration { display: inline-flex; align-items: center; gap: 10px; }
+.filter-duration input[type="number"] {
+  width: 110px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ced6de;
+  background: #fff;
+}
+.duration-sep { color: #6e7781; }
+
+.filter-actions { display: flex; gap: 10px; }
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d0d7de;
+  cursor: pointer;
+  transition: box-shadow 160ms ease, transform 80ms ease;
+}
+.btn-apply { background: var(--action); box-shadow: 0 1px 2px rgba(27,31,35,0.06); }
+.btn-apply:hover { box-shadow: 0 2px 6px rgba(27,31,35,0.12); }
+.btn-clear { background: #fff; }
+.btn:active { transform: translateY(1px); }
+
 /* Utility for accessible, visually hidden labels */
 .visually-hidden {
   position: absolute !important;
@@ -65,7 +143,19 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-auto-rows: 1fr;
+  align-items: stretch; /* stretch items so all cards match first card height */
   gap: 16px;
+}
+
+/* Featured: show circular thumbnails to match landing categories */
+.featured-list .course-image {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  margin: 8px auto 10px; /* center inside card */
 }
 
 /* Carousel styles for Featured */
@@ -81,6 +171,7 @@
   padding-bottom: 6px;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  align-items: stretch; /* ensure all cards match height in the row */
 }
 
 .carousel-track > * {
